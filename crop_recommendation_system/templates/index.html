@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>Crop Recommendation System</title>
+    <style>
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            color: #fff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-image: url('https://camo.githubusercontent.com/1bdf0f0577d91db85f8f22e7f8ed20e301498a172302c0d4455b58669114195c/68747470733a2f2f6d656469612e6c6963646e2e636f6d2f646d732f696d6167652f76322f4335313132415145366466527a5633454a74412f61727469636c652d636f7665725f696d6167652d736872696e6b5f3630305f323030302f61727469636c652d636f7665725f696d6167652d736872696e6b5f3630305f323030302f302f313535373738373830353739393f653d3231343734383336343726763d6265746126743d5f33394447695868377236307046704a4176486c756454794652344d726143616e4c325353377532787255');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+        }
+
+        .container {
+            background-color: rgba(0, 0, 0, 0.85); /* black with opacity */
+            padding: 30px 40px;
+            max-width: 500px;
+            width: 90%;
+            border-radius: 15px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.7);
+        }
+
+        h2 {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        label {
+            display: block;
+            margin-top: 15px;
+            font-weight: bold;
+        }
+
+        input[type="number"] {
+            width: 100%;
+            padding: 10px;
+            margin-top: 5px;
+            border: none;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+
+        input[type="submit"] {
+            margin-top: 25px;
+            width: 100%;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            padding: 12px;
+            font-size: 16px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        input[type="submit"]:hover {
+            background-color: #218838;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 25px 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+    <h2>Welcome to the new Project </h2>
+        <h2>🌾 Crop Recommendation System</h2>
+        <form action="/predict" method="post">
+            <label for="N">Nitrogen (N):</label>
+            <input type="number" step="any" name="N" id="N" value="50">
+
+            <label for="P">Phosphorous (P):</label>
+            <input type="number" step="any" name="P" id="P" value="50">
+
+            <label for="K">Potassium (K):</label>
+            <input type="number" step="any" name="K" id="K" value="50">
+
+            <label for="temperature">Temperature (°C):</label>
+            <input type="number" step="any" name="temperature" id="temperature" value="25">
+
+            <label for="humidity">Humidity (%):</label>
+            <input type="number" step="any" name="humidity" id="humidity" value="80">
+
+            <label for="ph">Soil pH:</label>
+            <input type="number" step="any" name="ph" id="ph" value="6.5">
+
+            <label for="rainfall">Rainfall (mm):</label>
+            <input type="number" step="any" name="rainfall" id="rainfall" value="100">
+
+            <input type="submit" value="🌱 Recommend">
+        </form>
+    </div>
+</body>
+</html>
