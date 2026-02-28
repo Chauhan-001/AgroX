@@ -6,6 +6,7 @@ import { enableScreens } from "react-native-screens";
 import SplashScreen from "./screens/SplashScreen";
 import PhoneEntry from "./screens/PhoneEntry";
 import HomeScreen from "./screens/Home/HomeScreen";
+import otpScreen from "./screens/otpScreen";
 
 
 
@@ -22,7 +23,8 @@ export default function App() {
       >
         <Stack.Screen name="Splash" component={SplashScreen} />
         <Stack.Screen name="PhoneEntry" component={PhoneEntry} />
-        <Stack.Screen name="Home" component={HomeScreen} />
+        <Stack.Screen name="FarmerHome" component={HomeScreen} />
+        <Stack.Screen name="OTP" component={otpScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );
