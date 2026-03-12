@@ -14,7 +14,7 @@ export default function PhoneScreen({ navigation }) {
     if (phone.length !== 10) return;
 
     try {
-      await fetch("http://192.168.29.97:7000/api/farmer/auth/send-otp", {
+      await fetch("http://192.168.25.118:7000/api/farmer/auth/send-otp", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ phone }),
