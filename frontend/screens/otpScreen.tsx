@@ -15,7 +15,7 @@ export default function OTPScreen({ route, navigation }) {
     if (otp.length < 4) return;
 
     try {
-      const response = await fetch("http://192.168.25.118:7000/api/farmer/auth/verify-otp", {
+      const response = await fetch("http://172.18.137.22:7000/api/farmer/auth/verify-otp", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ phone, otp }),
@@ -37,7 +37,7 @@ export default function OTPScreen({ route, navigation }) {
 
   const resendOtp = async () => {
     try {
-      await fetch("http://192.168.25.118:7000/api/farmer/auth/send-otp", {
+      await fetch("http://172.18.137.22:7000/api/farmer/auth/send-otp", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ phone }),

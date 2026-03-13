@@ -5,34 +5,34 @@ import {
   TextInput,
   TouchableOpacity,
   Alert,
+  Modal,
+  Pressable,
 } from "react-native";
 
 export default function PhoneScreen({ navigation }) {
   const [phone, setPhone] = useState("");
+  const [menuVisible, setMenuVisible] = useState(false);
 
   const sendOtp = async () => {
-    if (phone.length !== 10) return;
+    if (phone.length !== 10) {
+      Alert.alert("Enter valid phone number");
+      return;
+    }
 
     try {
-      await fetch("http://192.168.25.118:7000/api/farmer/auth/send-otp", {
+      await fetch("http://172.18.137.22:7000/api/farmer/auth/send-otp", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+        },
         body: JSON.stringify({ phone }),
       });
 
       navigation.navigate("OTP", { phone });
 
-    } catch (error) {
-      Alert.alert("Failed to send OTP");
+    } catch (e) {
+      Alert.alert("Server Error", "Failed to send OTP");
     }
-  };
-
-  const continueAsGuest = () => {
-    navigation.navigate("FarmerHome");
-  };
-
-  const goToAdminLogin = () => {
-    navigation.navigate("AdminLogin");
   };
 
   return (
@@ -45,28 +45,73 @@ export default function PhoneScreen({ navigation }) {
       }}
     >
 
-      {/* Hidden Admin Button */}
+      {/* 3 DOT MENU BUTTON */}
       <TouchableOpacity
-        onPress={goToAdminLogin}
-        activeOpacity={0.6}
+        onPress={() => setMenuVisible(true)}
         style={{
           position: "absolute",
-          top: 50,
-          left: 20,
+          top: 55,
+          right: 20,
+          zIndex: 10,
         }}
       >
-        <Text
-          style={{
-            fontSize: 18,
-            color: "#C5C5C5",
-            fontWeight: "400",
-          }}
-        >
-          ?
-        </Text>
+        <Text style={{ fontSize: 24 }}>⋮</Text>
       </TouchableOpacity>
 
-      {/* Heading */}
+      {/* MENU MODAL */}
+      <Modal
+        visible={menuVisible}
+        transparent
+        animationType="fade"
+        onRequestClose={() => setMenuVisible(false)}
+      >
+        <Pressable
+          style={{ flex: 1 }}
+          onPress={() => setMenuVisible(false)}
+        >
+          <View
+            style={{
+              position: "absolute",
+              top: 90,
+              right: 20,
+              backgroundColor: "#fff",
+              borderRadius: 12,
+              elevation: 8,
+              width: 170,
+              paddingVertical: 6,
+            }}
+          >
+
+            {/* ADMIN LOGIN */}
+            <TouchableOpacity
+              style={{ padding: 14 }}
+              onPress={() => {
+                setMenuVisible(false);
+                navigation.navigate("AdminLogin");
+              }}
+            >
+              <Text style={{ fontSize: 15, fontWeight: "600" }}>
+                Admin Login
+              </Text>
+            </TouchableOpacity>
+
+            {/* FARMER LOGIN (STAY HERE) */}
+            <TouchableOpacity
+              style={{ padding: 14 }}
+              onPress={() => {
+                setMenuVisible(false);
+              }}
+            >
+              <Text style={{ fontSize: 15, fontWeight: "600" }}>
+                Farmer Login
+              </Text>
+            </TouchableOpacity>
+
+          </View>
+        </Pressable>
+      </Modal>
+
+      {/* HEADING */}
       <Text
         style={{
           fontSize: 28,
@@ -88,7 +133,7 @@ export default function PhoneScreen({ navigation }) {
         Please enter your phone number
       </Text>
 
-      {/* Phone Input */}
+      {/* PHONE INPUT */}
       <View
         style={{
           flexDirection: "row",
@@ -125,11 +170,10 @@ export default function PhoneScreen({ navigation }) {
         />
       </View>
 
-      {/* Send OTP Button */}
+      {/* SEND OTP */}
       <TouchableOpacity
         onPress={sendOtp}
         disabled={phone.length !== 10}
-        activeOpacity={0.8}
         style={{
           height: 52,
           borderRadius: 10,
@@ -149,10 +193,9 @@ export default function PhoneScreen({ navigation }) {
         </Text>
       </TouchableOpacity>
 
-      {/* Continue as Guest */}
+      {/* CONTINUE AS GUEST */}
       <TouchableOpacity
-        onPress={continueAsGuest}
-        activeOpacity={0.6}
+        onPress={() => navigation.navigate("FarmerHome")}
         style={{
           marginTop: 12,
           alignSelf: "center",
@@ -169,7 +212,6 @@ export default function PhoneScreen({ navigation }) {
         </Text>
       </TouchableOpacity>
 
-      {/* Info */}
       <Text
         style={{
           marginTop: 14,
@@ -179,6 +221,7 @@ export default function PhoneScreen({ navigation }) {
       >
         🔒 We will send you a one-time verification code
       </Text>
+
     </View>
   );
 }
