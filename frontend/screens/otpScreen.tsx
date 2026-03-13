@@ -15,7 +15,11 @@ export default function OTPScreen({ route, navigation }) {
     if (otp.length < 4) return;
 
     try {
+<<<<<<< HEAD
       const response = await fetch("http://172.18.137.22:7000/api/farmer/auth/verify-otp", {
+=======
+      const response = await fetch("http://192.168.29.97:7000/api/farmer/auth/verify-otp", {
+>>>>>>> 3bc68132fc5fcc2448ecefafe0dfb409c06b5a37
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ phone, otp }),

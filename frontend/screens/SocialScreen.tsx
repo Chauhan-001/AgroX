@@ -56,6 +56,7 @@ export default function SocialScreen({ posts = [], onOpenProfile }: any) {
         >
           <Image
             source={{ uri: item.userImage || "https://i.pravatar.cc/100" }}
+            
             style={styles.avatar}
           />
 
