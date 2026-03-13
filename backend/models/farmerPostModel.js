@@ -10,21 +10,9 @@ const farmerPostSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-
-  mediaType: {
-    type: String,
-    enum: ["image", "video"],
-    required: true,
-  },
-
   location: {
     type: String,
   },
-
-  cropType: {
-    type: String,
-  },
-
   postedBy: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Farmer",
@@ -36,18 +24,35 @@ const farmerPostSchema = new mongoose.Schema({
     ref: "Farmer"
   }],
 
-  comments: [{
+   comments: [{
     farmerId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Farmer"
     },
-    text: String,
-    createdAt: {
-      type: Date,
-      default: Date.now
-    }
-  }]
 
+    text: String,
+
+    likes: [{
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Farmer"
+    }],
+
+    replies: [{
+      farmerId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Farmer"
+      },
+      text: String,
+      likes: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Farmer"
+      }],
+      createdAt: {
+        type: Date,
+        default: Date.now
+      },
+    }] 
+  }]
 }, { timestamps: true });
 
 module.exports = mongoose.model("FarmerPost", farmerPostSchema);
