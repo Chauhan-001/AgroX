@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   SafeAreaView,
   View,
@@ -14,10 +14,16 @@ import {
   ScrollView,
 } from "react-native";
 import { launchImageLibrary } from "react-native-image-picker";
+import { useIsFocused } from "@react-navigation/native";
 
 const { width } = Dimensions.get("window");
 
+/* ⭐ GLOBAL SESSION STORE */
+let MARKET_SESSION = [];
+
 export default function AdminMarketScreen() {
+
+  const isFocused = useIsFocused();
 
   const [posts, setPosts] = useState([]);
 
@@ -28,14 +34,20 @@ export default function AdminMarketScreen() {
   const [phone, setPhone] = useState("");
   const [email, setEmail] = useState("");
   const [desc, setDesc] = useState("");
-  const [image, setImage] = useState("");
+  const [image, setImage] = useState(null);
 
   const [editingId, setEditingId] = useState(null);
   const [modal, setModal] = useState(false);
 
+  useEffect(() => {
+    if (isFocused) {
+      setPosts([...MARKET_SESSION]);
+    }
+  }, [isFocused]);
+
   const pickImage = () => {
     launchImageLibrary({ mediaType: "photo" }, (res) => {
-      if (res && res.assets && res.assets.length > 0) {
+      if (res?.assets?.length > 0) {
         setImage(res.assets[0].uri);
       }
     });
@@ -49,12 +61,10 @@ export default function AdminMarketScreen() {
     }
 
     if (editingId) {
-      setPosts(prev =>
-        prev.map(p =>
-          p.id === editingId
-            ? { ...p, crop, org, qty, price, phone, email, desc, image }
-            : p
-        )
+      MARKET_SESSION = MARKET_SESSION.map((p) =>
+        p.id === editingId
+          ? { ...p, crop, org, qty, price, phone, email, desc, image }
+          : p
       );
     } else {
       const newPost = {
@@ -70,9 +80,12 @@ export default function AdminMarketScreen() {
         date: new Date().toLocaleDateString(),
       };
 
-      setPosts(prev => [newPost, ...prev]);
+      MARKET_SESSION = [newPost, ...MARKET_SESSION];
     }
 
+    setPosts([...MARKET_SESSION]);
+
+    /* reset */
     setCrop("");
     setOrg("");
     setQty("");
@@ -80,20 +93,20 @@ export default function AdminMarketScreen() {
     setPhone("");
     setEmail("");
     setDesc("");
-    setImage("");
+    setImage(null);
     setEditingId(null);
     setModal(false);
   };
 
   const editPost = (item) => {
-    setCrop(item.crop);
-    setOrg(item.org);
-    setQty(item.qty);
-    setPrice(item.price);
-    setPhone(item.phone);
-    setEmail(item.email);
-    setDesc(item.desc);
-    setImage(item.image);
+    setCrop(item.crop || "");
+    setOrg(item.org || "");
+    setQty(item.qty || "");
+    setPrice(item.price || "");
+    setPhone(item.phone || "");
+    setEmail(item.email || "");
+    setDesc(item.desc || "");
+    setImage(item.image || null);
     setEditingId(item.id);
     setModal(true);
   };
@@ -105,7 +118,9 @@ export default function AdminMarketScreen() {
         text: "Delete",
         style: "destructive",
         onPress: () => {
-          setPosts(prev => prev.filter(p => p.id !== id));
+          MARKET_SESSION =
+            MARKET_SESSION.filter((p) => p.id !== id);
+          setPosts([...MARKET_SESSION]);
         },
       },
     ]);
@@ -114,18 +129,25 @@ export default function AdminMarketScreen() {
   const renderItem = ({ item }) => (
     <View style={styles.card}>
 
-      {item.image ? (
-        <Image source={{ uri: item.image }} style={styles.image} />
-      ) : null}
+      {item.image && (
+        <Image
+          source={{ uri: item.image }}
+          style={styles.image}
+        />
+      )}
 
       <View style={{ padding: 14 }}>
         <Text style={styles.crop}>{item.crop}</Text>
         <Text style={styles.org}>{item.org}</Text>
 
-        <Text style={styles.price}>₹ {item.price} / Quintal</Text>
+        <Text style={styles.price}>
+          ₹ {item.price} / Quintal
+        </Text>
 
         {item.qty ? (
-          <Text style={styles.info}>Required Qty: {item.qty} Quintal</Text>
+          <Text style={styles.info}>
+            Required Qty: {item.qty} Quintal
+          </Text>
         ) : null}
 
         {item.phone ? (
@@ -144,11 +166,17 @@ export default function AdminMarketScreen() {
       </View>
 
       <View style={styles.actionRow}>
-        <TouchableOpacity style={styles.editBtn} onPress={() => editPost(item)}>
+        <TouchableOpacity
+          style={styles.editBtn}
+          onPress={() => editPost(item)}
+        >
           <Text style={styles.actionText}>EDIT</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.deleteBtn} onPress={() => deletePost(item.id)}>
+        <TouchableOpacity
+          style={styles.deleteBtn}
+          onPress={() => deletePost(item.id)}
+        >
           <Text style={styles.actionText}>DEL</Text>
         </TouchableOpacity>
       </View>
@@ -161,7 +189,9 @@ export default function AdminMarketScreen() {
 
       <View style={styles.header}>
         <Text style={styles.headerTitle}>🌾 Market Demand</Text>
-        <Text style={styles.headerSub}>Organization crop buying offers</Text>
+        <Text style={styles.headerSub}>
+          Organization crop buying offers
+        </Text>
       </View>
 
       <FlatList
@@ -170,14 +200,17 @@ export default function AdminMarketScreen() {
         renderItem={renderItem}
         contentContainerStyle={{ padding: 16, paddingBottom: 120 }}
         ListEmptyComponent={
-          <Text style={{ textAlign: "center", marginTop: 40, color: "#777" }}>
-            No offers created yet
+          <Text style={{ textAlign:"center", marginTop:50 }}>
+            No Offers Created
           </Text>
         }
       />
 
-      <TouchableOpacity style={styles.fab} onPress={() => setModal(true)}>
-        <Text style={{ color: "#fff", fontSize: 30 }}>＋</Text>
+      <TouchableOpacity
+        style={styles.fab}
+        onPress={() => setModal(true)}
+      >
+        <Text style={{ color:"#fff", fontSize:30 }}>＋</Text>
       </TouchableOpacity>
 
       <Modal visible={modal} animationType="slide">
@@ -190,7 +223,7 @@ export default function AdminMarketScreen() {
           <TextInput placeholder="Crop Name" value={crop} onChangeText={setCrop} style={styles.input}/>
           <TextInput placeholder="Organization Name" value={org} onChangeText={setOrg} style={styles.input}/>
           <TextInput placeholder="Required Qty (Quintal)" value={qty} onChangeText={setQty} keyboardType="numeric" style={styles.input}/>
-          <TextInput placeholder="Offer Price ₹ / Quintal" value={price} onChangeText={setPrice} keyboardType="numeric" style={styles.input}/>
+          <TextInput placeholder="Offer Price ₹" value={price} onChangeText={setPrice} keyboardType="numeric" style={styles.input}/>
           <TextInput placeholder="Contact Phone" value={phone} onChangeText={setPhone} keyboardType="phone-pad" style={styles.input}/>
           <TextInput placeholder="Contact Email" value={email} onChangeText={setEmail} style={styles.input}/>
 
@@ -203,11 +236,10 @@ export default function AdminMarketScreen() {
           />
 
           <TouchableOpacity style={styles.imagePicker} onPress={pickImage}>
-            {image ? (
-              <Image source={{ uri: image }} style={{ width: "100%", height: "100%", borderRadius: 12 }} />
-            ) : (
-              <Text>Select Crop Image</Text>
-            )}
+            {image
+              ? <Image source={{ uri:image }} style={{ width:"100%", height:"100%", borderRadius:12 }}/>
+              : <Text>Select Crop Image</Text>
+            }
           </TouchableOpacity>
 
           <TouchableOpacity style={styles.publishBtn} onPress={savePost}>
@@ -217,7 +249,7 @@ export default function AdminMarketScreen() {
           </TouchableOpacity>
 
           <TouchableOpacity style={styles.closeBtn} onPress={() => setModal(false)}>
-            <Text style={{ color: "#666" }}>Close</Text>
+            <Text style={{ color:"#555" }}>Close</Text>
           </TouchableOpacity>
 
         </ScrollView>
@@ -234,7 +266,7 @@ headerTitle:{ fontSize:24, fontWeight:"800", color:"#fff" },
 headerSub:{ color:"#FFE7D1", marginTop:4 },
 card:{ backgroundColor:"#fff", borderRadius:18, marginBottom:16, elevation:4, overflow:"hidden" },
 image:{ width:"100%", height:width*0.55 },
-crop:{ fontSize:18, fontWeight:"800", color:"#111" },
+crop:{ fontSize:18, fontWeight:"800" },
 org:{ fontSize:13, color:"#777" },
 price:{ fontSize:16, color:"#2E7D32", fontWeight:"800", marginVertical:4 },
 info:{ fontSize:13, color:"#555" },
@@ -247,10 +279,10 @@ actionText:{ color:"#fff", fontSize:12 },
 fab:{ position:"absolute", bottom:30, right:24, width:65, height:65, borderRadius:32, backgroundColor:"#FF7A00", justifyContent:"center", alignItems:"center", elevation:8 },
 modalContainer:{ padding:20, paddingTop:60, backgroundColor:"#fff" },
 modalTitle:{ fontSize:22, fontWeight:"800", marginBottom:15 },
-input:{ backgroundColor:"#a0a7b5", padding:14, borderRadius:14, marginBottom:10, color:"#000" },
-textArea:{ backgroundColor:"#acb2bd", padding:14, borderRadius:14, height:110, marginBottom:10 },
-imagePicker:{ height:150, backgroundColor:"#b7bcc7", borderRadius:14, justifyContent:"center", alignItems:"center" },
+input:{ backgroundColor:"#F1F3F7", padding:14, borderRadius:14, marginBottom:10 },
+textArea:{ backgroundColor:"#F1F3F7", padding:14, borderRadius:14, height:110, marginBottom:10, textAlignVertical:"top" },
+imagePicker:{ height:150, backgroundColor:"#F1F3F7", borderRadius:14, justifyContent:"center", alignItems:"center" },
 publishBtn:{ backgroundColor:"#FF7A00", padding:16, borderRadius:16, alignItems:"center", marginTop:20 },
-publishText:{ color:"#951f1f", fontWeight:"700" },
+publishText:{ color:"#fff", fontWeight:"700" },
 closeBtn:{ alignItems:"center", marginTop:12 }
 });

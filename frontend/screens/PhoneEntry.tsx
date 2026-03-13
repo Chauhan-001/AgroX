@@ -20,11 +20,7 @@ export default function PhoneScreen({ navigation }) {
     }
 
     try {
-<<<<<<< HEAD
-      await fetch("http://172.18.137.22:7000/api/farmer/auth/send-otp", {
-=======
       await fetch("http://192.168.29.97:7000/api/farmer/auth/send-otp", {
->>>>>>> 3bc68132fc5fcc2448ecefafe0dfb409c06b5a37
         method: "POST",
         headers: {
           "Content-Type": "application/json",
