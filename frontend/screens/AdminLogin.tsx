@@ -11,18 +11,32 @@ export default function AdminLogin({ navigation }) {
   const [adminId, setAdminId] = useState("");
   const [password, setPassword] = useState("");
 
-  const handleLogin = () => {
+  const handleLogin = async () => {
     if (!adminId || !password) {
       Alert.alert("Error", "Enter Login ID & Password");
       return;
     }
 
-    if (adminId === "admin" && password === "1234") {
-      navigation.replace("AdminHome");
-    } else {
-      Alert.alert("Invalid", "Wrong Admin Credentials");
-    }
-  };
+    try {
+         const response = await fetch("http://192.168.29.97:7000/api/admin/auth/login", {
+           method: "POST",
+           headers: { "Content-Type": "application/json" },
+           body: JSON.stringify({ id: adminId, password }),
+         });
+   
+   
+         if (!response.ok) {
+           Alert.alert("Invalid Credentials");
+           return;
+         }
+   
+         navigation.replace("AdminHome");
+   
+       } catch (error) {
+         Alert.alert("Verification failed");
+       }
+     };
+  
 
   return (
     <View

@@ -1,4 +1,5 @@
 import Farmer from "../models/farmerModel.js";
+import FarmerPost from "../models/farmerPostModel.js";
 import jwt from "jsonwebtoken";
 
 const OTP_EXP_MIN = 5;
@@ -79,3 +80,115 @@ export async function verifyOtp(req, res) {
     res.status(500).json({ success: false, message: e.message });
   }
 }
+
+
+export const createPost = async (req, res) => {
+  try {
+
+    const { caption, mediaUrl, location } = req.body;
+
+    const post = new FarmerPost({
+      caption,
+      mediaUrl,
+      location,
+      postedBy: req.user.id
+    });
+
+    await post.save();
+
+    res.status(201).json(post);
+
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+export const toggleLikeComment = async (req, res) => {
+  try {
+
+    const post = await FarmerPost.findById(req.params.postId);
+
+    const comment = post.comments.id(req.params.commentId);
+
+    const userId = req.user.id;
+
+    if (comment.likes.includes(userId)) {
+      comment.likes.pull(userId);
+    } else {
+      comment.likes.push(userId);
+    }
+
+    await post.save();
+
+    res.json(post);
+
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+export const addComment = async (req, res) => {
+  try {
+
+    const post = await FarmerPost.findById(req.params.postId);
+
+    post.comments.push({
+      farmerId: req.user.id,
+      text: req.body.text
+    });
+
+    await post.save();
+
+    res.json(post);
+
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+export const replyToComment = async (req, res) => {
+  try {
+
+    const post = await FarmerPost.findById(req.params.postId);
+
+    const comment = post.comments.id(req.params.commentId);
+
+    comment.replies.push({
+      farmerId: req.user.id,
+      text: req.body.text
+    });
+
+    await post.save();
+
+    res.json(post);
+
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+export const toggleLikeReply = async (req, res) => {
+  try {
+
+    const post = await FarmerPost.findById(req.params.postId);
+
+    const comment = post.comments.id(req.params.commentId);
+
+    const reply = comment.replies.id(req.params.replyId);
+
+    const userId = req.user.id;
+
+    if (reply.likes.includes(userId)) {
+      reply.likes.pull(userId);
+    } else {
+      reply.likes.push(userId);
+    }
+
+    await post.save();
+
+    res.json(post);
+
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};

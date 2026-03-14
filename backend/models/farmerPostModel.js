@@ -55,4 +55,4 @@ const farmerPostSchema = new mongoose.Schema({
   }]
 }, { timestamps: true });
 
-module.exports = mongoose.model("FarmerPost", farmerPostSchema);
+export default mongoose.model("FarmerPost", farmerPostSchema);

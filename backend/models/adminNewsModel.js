@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 
 
-const adSchema = new mongoose.Schema({
+const newsSchema = new mongoose.Schema({
   title: String,
   description: String,
   image: String,
@@ -23,5 +23,4 @@ const adSchema = new mongoose.Schema({
   }
 
 }, { timestamps: true });
-
-module.exports = mongoose.model("Ad", adSchema);
+export default mongoose.model("news", newsSchema);

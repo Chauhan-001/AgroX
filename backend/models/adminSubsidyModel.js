@@ -16,5 +16,5 @@ const subsidySchema = new mongoose.Schema({
 
 }, { timestamps: true });
 
-module.exports = mongoose.model("Subsidy", subsidySchema);
+export default mongoose.model("Subsidy", subsidySchema);
 

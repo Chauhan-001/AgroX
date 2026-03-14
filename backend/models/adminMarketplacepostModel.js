@@ -1,12 +1,12 @@
-const mongoose = require("mongoose");
+import mongoose from "mongoose";
 
 const postSchema = new mongoose.Schema({
   title: String,
   product: String,
   image: String,
-  comapny: String,
+  company: String,
   description: String,
-  price:string,
+  price: String,
   contactInfo: String,
    postedBy: {
       type: mongoose.Schema.Types.ObjectId,
@@ -15,4 +15,4 @@ const postSchema = new mongoose.Schema({
 
 }, { timestamps: true });
 
-module.exports = mongoose.model("Post", postSchema);
+export default mongoose.model("Post", postSchema);

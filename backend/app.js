@@ -1,9 +1,11 @@
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
-import {mongoDbConnect} from './connection.js';
+import {mongoDbConnect} from './config/connection.js';
 import farmerRoute from './routes/farmerRoute.js';
-
+import adminRoute from './routes/adminRoute.js';
+import Admin from './models/adminModel.js';
+import bcrypt from "bcrypt";
 const app = express();
 
 dotenv.config();
@@ -20,7 +22,20 @@ mongoDbConnect("mongodb://localhost:27017/AgroX")
 
 
 
+const createDefaultAdmin = async () => {
+  const adminExists = await Admin.findOne({ id: process.env.ADMIN_ID });
+  if (!adminExists) {
+    const hashedPassword = await bcrypt.hash(process.env.ADMIN_PASSWORD, 10);
+    await Admin.create({
+      id: process.env.ADMIN_ID,
+      password: hashedPassword
+    });
+    console.log("Default admin created");
+  }};createDefaultAdmin();
+
+
 app.use("/api/farmer", farmerRoute);
+app.use("/api/admin", adminRoute);
 
 
 
