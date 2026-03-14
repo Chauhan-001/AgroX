@@ -8,7 +8,7 @@ const postSchema = new mongoose.Schema({
   description: String,
   price: String,
   contactInfo: String,
-   postedBy: {
+  postedBy: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Admin",
     }
