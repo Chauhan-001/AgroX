@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import { View, Text, StyleSheet, Animated } from "react-native";
 import LinearGradient from "react-native-linear-gradient";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -9,6 +9,7 @@ import SubsidyScreen from "../Subsidy/SubsidyScreen";
 import MarketScreen from "../Market/MarketScreen";
 import ProfileScreen from "../Profile/ProfileScreen";
 import ProfileViewScreen from "../ProfileView/ProfileViewScreen";
+import CreatePostScreen from "./CreatePostScreen";
 
 import BottomTabBar from "../components/BottomTabBar";
 import FloatingUploadButton from "../components/FloatingUploadButton";
@@ -19,10 +20,15 @@ const HEADER_SCROLL_DISTANCE = HEADER_MAX_HEIGHT - HEADER_MIN_HEIGHT;
 
 export default function HomeScreen() {
   const [activeTab, setActiveTab] = useState("Social");
-  const [posts, setPosts] = useState<any[]>([]);
-  const [profileUser, setProfileUser] = useState<any>(null);
+  const [posts, setPosts] = useState([]);
+  const [profileUser, setProfileUser] = useState(null);
+  const [createPostOpen, setCreatePostOpen] = useState(false);
 
   const scrollY = useRef(new Animated.Value(0)).current;
+
+  useEffect(() => {
+    scrollY.setValue(0);
+  }, [activeTab, profileUser]);
 
   const headerHeight = scrollY.interpolate({
     inputRange: [0, HEADER_SCROLL_DISTANCE],
@@ -30,9 +36,7 @@ export default function HomeScreen() {
     extrapolate: "clamp",
   });
 
-  const renderContent = () => {
-
-    /* ⭐ PROFILE SCREEN OPEN */
+  const renderTabsContent = () => {
     if (profileUser) {
       return (
         <ProfileViewScreen
@@ -43,43 +47,37 @@ export default function HomeScreen() {
       );
     }
 
-    switch (activeTab) {
-      case "Social":
-        return (
-          <SocialScreen
-            posts={posts}
-            onOpenProfile={(user: any) => setProfileUser(user)}
-          />
-        );
+    if (activeTab === "Prediction") return <PredictionScreen />;
+    if (activeTab === "Subsidy") return <SubsidyScreen />;
+    if (activeTab === "Market") return <MarketScreen />;
+    if (activeTab === "Profile") return <ProfileScreen />;
 
-      case "Prediction":
-        return <PredictionScreen />;
-
-      case "Subsidy":
-        return <SubsidyScreen />;
-
-      case "Market":
-        return <MarketScreen />;
-
-      case "Profile":
-        return <ProfileScreen />;
-
-      default:
-        return (
-          <SocialScreen
-            posts={posts}
-            onOpenProfile={(user: any) => setProfileUser(user)}
-          />
-        );
-    }
+    return null;
   };
+
+  const showHeader = activeTab === "Social" && !profileUser;
 
   return (
     <SafeAreaView style={styles.safe}>
       <View style={{ flex: 1 }}>
+        
+        {/* ⭐ CREATE POST SCREEN */}
+        {createPostOpen && (
+          <CreatePostScreen
+            onClose={() => setCreatePostOpen(false)}
+            onPost={(post) => {
+              setPosts(prev => [post, ...prev]);
 
-        {/* ⭐ WEATHER HEADER */}
-        {activeTab === "Social" && !profileUser && (
+              // ⭐ auto go to home feed
+              setActiveTab("Social");
+              setProfileUser(null);
+              setCreatePostOpen(false);
+            }}
+          />
+        )}
+
+        {/* ⭐ HEADER */}
+        {showHeader && (
           <Animated.View style={[styles.header, { height: headerHeight }]}>
             <LinearGradient
               colors={["#FF7A00", "#FFB347"]}
@@ -92,40 +90,52 @@ export default function HomeScreen() {
           </Animated.View>
         )}
 
-        <Animated.ScrollView
-          contentContainerStyle={{
-            paddingTop:
-              activeTab === "Social" && !profileUser
-                ? HEADER_MAX_HEIGHT
-                : 20,
-            paddingBottom: 120,
-          }}
-          showsVerticalScrollIndicator={false}
-          onScroll={Animated.event(
-            [{ nativeEvent: { contentOffset: { y: scrollY } } }],
-            { useNativeDriver: false }
-          )}
-        >
-          {renderContent()}
-        </Animated.ScrollView>
-
-        {/* ⭐ HIDE FAB + TAB IN PROFILE */}
-        {!profileUser && (
-          <>
-            <FloatingUploadButton
-              onPostCreate={(media: any) => {
-                setPosts((prev) => [media, ...prev]);
-                setActiveTab("Social");
-              }}
+        {/* ⭐ SOCIAL FEED */}
+        {activeTab === "Social" && !profileUser && (
+          <View style={{ flex: 1 }}>
+            <SocialScreen
+              posts={posts}
+              scrollY={scrollY}
+              headerHeight={HEADER_MAX_HEIGHT}
+              onOpenProfile={(user) => setProfileUser(user)}
             />
-
-            <BottomTabBar
-              activeTab={activeTab}
-              onChange={setActiveTab}
-            />
-          </>
+          </View>
         )}
 
+        {/* ⭐ OTHER TABS */}
+        {activeTab !== "Social" && !profileUser && (
+          <Animated.ScrollView
+            contentContainerStyle={{
+              paddingTop: showHeader ? HEADER_MAX_HEIGHT : 20,
+              paddingBottom: 120,
+            }}
+            showsVerticalScrollIndicator={false}
+            scrollEventThrottle={16}
+            onScroll={
+              showHeader
+                ? Animated.event(
+                    [{ nativeEvent: { contentOffset: { y: scrollY } } }],
+                    { useNativeDriver: false }
+                  )
+                : undefined
+            }
+          >
+            {renderTabsContent()}
+          </Animated.ScrollView>
+        )}
+
+        {/* ⭐ PROFILE VIEW */}
+        {profileUser && renderTabsContent()}
+
+        {/* ⭐ FLOAT BUTTON */}
+        {showHeader && (
+          <FloatingUploadButton onPress={() => setCreatePostOpen(true)} />
+        )}
+
+        {/* ⭐ TAB BAR */}
+        {!profileUser && (
+          <BottomTabBar activeTab={activeTab} onChange={setActiveTab} />
+        )}
       </View>
     </SafeAreaView>
   );
@@ -136,14 +146,14 @@ const styles = StyleSheet.create({
 
   header: {
     position: "absolute",
+    top: 0,
     left: 0,
     right: 0,
-    top: 0,
+    zIndex: 10,
+    elevation: 10,
+    overflow: "hidden",
     borderBottomLeftRadius: 30,
     borderBottomRightRadius: 30,
-    overflow: "hidden",
-    zIndex: 10,
-    elevation: 6,
   },
 
   headerGradient: {

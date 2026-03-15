@@ -18,7 +18,7 @@ export default function AdminLogin({ navigation }) {
     }
 
     try {
-         const response = await fetch("http://192.168.29.97:7000/api/admin/auth/login", {
+         const response = await fetch("http://172.18.137.22:7000/api/admin/auth/login", {
            method: "POST",
            headers: { "Content-Type": "application/json" },
            body: JSON.stringify({ id: adminId, password }),
