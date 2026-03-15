@@ -85,13 +85,17 @@ export async function verifyOtp(req, res) {
 export const createPost = async (req, res) => {
   try {
 
-    const { caption, mediaUrl, location } = req.body;
+    const { caption,  location } = req.body;
 
+    
+    const mediaUrl= req.files ? req.files.map(file => file.path) : [];
+
+    
     const post = new FarmerPost({
       caption,
-      mediaUrl,
       location,
-      postedBy: req.user.id
+      postedBy: req.user.id,
+      mediaUrl
     });
 
     await post.save();

@@ -7,6 +7,8 @@ const farmerSchema = new mongoose.Schema({
   otpExpiresAt: Date,
   isPhoneVerified: { type: Boolean, default: false },
   name: String,
+  location: String,
+  profilePicture: String,
   onboardingComplete: { type: Boolean, default: false },
 }, { timestamps: true });
 

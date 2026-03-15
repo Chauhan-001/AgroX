@@ -1,13 +1,15 @@
 import express from 'express';
 import {verifyOtp, sendOtp,createPost,toggleLikeComment,toggleLikeReply,addComment,replyToComment} from '../controllers/farmerController.js';
 import { verifyToken } from '../middlewares/verifyToken.js';
+import upload from "../middleware/cloudinaryStorage.js";
+
 const farmerRoute = express.Router();
 
 farmerRoute.post("/auth/send-otp", sendOtp);
 
 farmerRoute.post("/auth/verify-otp", verifyOtp);
 // Create post
-farmerRoute.post("/create", verifyToken, createPost);
+farmerRoute.post("/create", verifyToken,upload.array("images", 5), createPost);
 
 // Add comment to post
 farmerRoute.post("/:postId/comment", verifyToken, addComment);

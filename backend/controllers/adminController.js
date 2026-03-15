@@ -6,7 +6,6 @@ import Admin from "../models/adminModel.js";
 import bcrypt from "bcrypt";
 
 
-
 //admin login
 export const adminLogin = async (req, res) => {
   try {
@@ -50,8 +49,8 @@ export const adminLogin = async (req, res) => {
 export const createPost = async (req, res) => {
   try {
 
-    const { title, product, image, company, description, price, contactInfo } = req.body;
-
+    const { title, product, company, description, price, contactInfo } = req.body;
+    const image= req.files ? req.files.map(file => file.path) : [];
     const post = new Post({
       title,
       product,
@@ -165,7 +164,8 @@ export const deletePost = async (req, res) => {
 export const createNews = async (req, res) => {
   try {
 
-    const { title, description, image, redirectLink, adType } = req.body;
+    const { title, description,  redirectLink, adType } = req.body;
+    const image= req.files ? req.files.map(file => file.path) : [];
 
     const news = new News({
       title,
@@ -314,7 +314,8 @@ export const toggleNewsStatus = async (req, res) => {
 export const createSubsidy = async (req, res) => {
   try {
 
-    const { title, description, schemeType, state, lastDate, link, image } = req.body;
+    const { title, description, schemeType, state, lastDate, link } = req.body;
+    const image= req.files ? req.files.map(file => file.path) : [];
 
     const subsidy = new Subsidy({
       title,
