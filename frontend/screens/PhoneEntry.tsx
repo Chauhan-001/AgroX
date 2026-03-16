@@ -20,12 +20,13 @@ export default function PhoneScreen({ navigation }) {
     }
 
     try {
-      await fetch("http://172.18.137.22:7000/api/farmer/auth/send-otp", {
+      await fetch("http://192.168.25.229:7000/api/farmer/auth/send-otp", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({ phone }),
+        
       });
 
       navigation.navigate("OTP", { phone });

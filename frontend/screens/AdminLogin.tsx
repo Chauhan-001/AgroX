@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   Alert,
 } from "react-native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function AdminLogin({ navigation }) {
   const [adminId, setAdminId] = useState("");
@@ -18,7 +19,7 @@ export default function AdminLogin({ navigation }) {
     }
 
     try {
-         const response = await fetch("http://172.18.137.22:7000/api/admin/auth/login", {
+         const response = await fetch("http://192.168.25.229:7000/api/admin/auth/login", {
            method: "POST",
            headers: { "Content-Type": "application/json" },
            body: JSON.stringify({ id: adminId, password }),
@@ -29,8 +30,11 @@ export default function AdminLogin({ navigation }) {
            Alert.alert("Invalid Credentials");
            return;
          }
+
+          const data = await response.json();
+          await AsyncStorage.setItem("token", data.token);
    
-         navigation.replace("AdminHome");
+          navigation.replace("AdminHome");
    
        } catch (error) {
          Alert.alert("Verification failed");

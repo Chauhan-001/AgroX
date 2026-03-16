@@ -1,7 +1,8 @@
 import express from 'express';
 import {verifyOtp, sendOtp,createPost,toggleLikeComment,toggleLikeReply,addComment,replyToComment} from '../controllers/farmerController.js';
 import { verifyToken } from '../middlewares/verifyToken.js';
-import upload from "../middleware/cloudinaryStorage.js";
+import upload from "../middlewares/cloudinaryStorage.js";
+
 
 const farmerRoute = express.Router();
 

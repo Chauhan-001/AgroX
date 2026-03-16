@@ -162,7 +162,7 @@ export default function AdminNewsScreen() {
         style={styles.fab}
         onPress={() => setShowModal(true)}
       >
-        <Text style={{ color: "#fff", fontSize: 30 }}>＋</Text>
+        <Text style={{ color: "#c96565", fontSize: 30 }}>＋</Text>
       </TouchableOpacity>
 
       <Modal visible={showModal} animationType="slide">
@@ -274,13 +274,13 @@ const styles = StyleSheet.create({
   },
 
   deleteBtn: {
-    backgroundColor: "#E53935",
+    backgroundColor: "#bf615f",
     paddingHorizontal: 12,
     paddingVertical: 5,
     borderRadius: 20,
   },
 
-  actionText: { color: "#fff", fontSize: 12 },
+  actionText: { color: "#dfaaaa", fontSize: 12 },
 
   fab: {
     position: "absolute",
@@ -305,14 +305,14 @@ const styles = StyleSheet.create({
   modalTitle: { fontSize: 22, fontWeight: "800", marginBottom: 15 },
 
   input: {
-    backgroundColor: "#F1F3F7",
+    backgroundColor: "#f48d44",
     padding: 14,
     borderRadius: 14,
     marginBottom: 12,
   },
 
   textArea: {
-    backgroundColor: "#F1F3F7",
+    backgroundColor: "#f48d44",
     padding: 14,
     borderRadius: 14,
     height: 120,

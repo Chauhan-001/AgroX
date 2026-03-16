@@ -18,7 +18,7 @@ export default function FarmerMarketDetails({ route }) {
 
         <Text style={styles.info}>🏢 {post.org}</Text>
         <Text style={styles.info}>📍 {post.location}</Text>
-        <Text style={styles.info}>Required Qty: {post.qty} Quintal</Text>
+        <Text style={styles.info}>Required Qty: {post.qty} </Text>
 
         <Text style={styles.desc}>{post.desc}</Text>
 

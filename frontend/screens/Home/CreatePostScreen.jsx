@@ -35,21 +35,7 @@ export default function CreatePostScreen({ onClose, onPost }) {
       return;
     }
 
-    const newPost = {
-      id: Date.now(),
-      image,
-      caption,
-      crop,
-      location,
-      user: {
-        name: "Farmer",
-        avatar: "https://i.pravatar.cc/150?img=12",
-      },
-      likes: 0,
-      comments: [],
-      time: "Just now",
-    };
-
+    const response={}
     onPost(newPost);
     onClose();
   };

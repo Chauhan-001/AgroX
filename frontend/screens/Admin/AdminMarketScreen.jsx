@@ -32,7 +32,6 @@ export default function AdminMarketScreen() {
   const [qty, setQty] = useState("");
   const [price, setPrice] = useState("");
   const [phone, setPhone] = useState("");
-  const [email, setEmail] = useState("");
   const [desc, setDesc] = useState("");
   const [image, setImage] = useState(null);
 
@@ -53,37 +52,64 @@ export default function AdminMarketScreen() {
     });
   };
 
-  const savePost = () => {
+  const savePost = async () => {
 
     if (!crop.trim() || !org.trim() || !price.trim()) {
       Alert.alert("Error", "Fill required fields");
       return;
     }
 
-    if (editingId) {
-      MARKET_SESSION = MARKET_SESSION.map((p) =>
-        p.id === editingId
-          ? { ...p, crop, org, qty, price, phone, email, desc, image }
-          : p
+  try {
+      const token = await AsyncStorage.getItem("token");
+      if (!token) {
+        Alert.alert("Error", "You are not logged in");
+        return;
+      }
+
+      const formData = new FormData();
+      formData.append("crop", crop);
+      formData.append("organization", org);
+      formData.append("quantity", qty);
+      formData.append("price", price);
+      formData.append("phone", phone);
+      formData.append("description", desc);
+      
+
+      image.forEach((img, index) => {
+        const filename = img.split("/").pop();
+        const match = /\.(\w+)$/.exec(filename ?? "");
+        const type = match ? `image/${match[1]}` : `image`;
+        formData.append("images", {
+          uri: img,
+          name: filename || `photo_${index}.jpg`,
+          type,
+        });
+      });
+
+      const response = await fetch(
+        "http://192.168.29.97:7000/api/admin/news",
+        {
+          method: "POST",
+          headers: { Authorization: `Bearer ${token}` },
+          body: formData,
+        }
       );
-    } else {
-      const newPost = {
-        id: Date.now().toString(),
-        crop,
-        org,
-        qty,
-        price,
-        phone,
-        email,
-        desc,
-        image,
-        date: new Date().toLocaleDateString(),
-      };
 
-      MARKET_SESSION = [newPost, ...MARKET_SESSION];
+      const data = await response.json();
+      if (response.ok) {
+        Alert.alert("Success", "added successfully");
+        console.log(data);
+      } else {
+        Alert.alert("Error", data.message || "Something went wrong");
+      }
+    } catch (error) {
+      console.log(error);
+      Alert.alert("Error", "Network error");
     }
+  };
 
-    setPosts([...MARKET_SESSION]);
+        
+  
 
     /* reset */
     setCrop("");
@@ -225,8 +251,6 @@ export default function AdminMarketScreen() {
           <TextInput placeholder="Required Qty (Quintal)" value={qty} onChangeText={setQty} keyboardType="numeric" style={styles.input}/>
           <TextInput placeholder="Offer Price ₹" value={price} onChangeText={setPrice} keyboardType="numeric" style={styles.input}/>
           <TextInput placeholder="Contact Phone" value={phone} onChangeText={setPhone} keyboardType="phone-pad" style={styles.input}/>
-          <TextInput placeholder="Contact Email" value={email} onChangeText={setEmail} style={styles.input}/>
-
           <TextInput
             placeholder="Description"
             value={desc}
@@ -264,7 +288,7 @@ container:{ flex:1, backgroundColor:"#F4F6FA" },
 header:{ backgroundColor:"#FF7A00", paddingTop:55, paddingBottom:25, paddingHorizontal:18, borderBottomLeftRadius:25, borderBottomRightRadius:25 },
 headerTitle:{ fontSize:24, fontWeight:"800", color:"#fff" },
 headerSub:{ color:"#FFE7D1", marginTop:4 },
-card:{ backgroundColor:"#fff", borderRadius:18, marginBottom:16, elevation:4, overflow:"hidden" },
+card:{ backgroundColor:"#e1c4c4", borderRadius:18, marginBottom:16, elevation:4, overflow:"hidden" },
 image:{ width:"100%", height:width*0.55 },
 crop:{ fontSize:18, fontWeight:"800" },
 org:{ fontSize:13, color:"#777" },
@@ -279,8 +303,8 @@ actionText:{ color:"#fff", fontSize:12 },
 fab:{ position:"absolute", bottom:30, right:24, width:65, height:65, borderRadius:32, backgroundColor:"#FF7A00", justifyContent:"center", alignItems:"center", elevation:8 },
 modalContainer:{ padding:20, paddingTop:60, backgroundColor:"#fff" },
 modalTitle:{ fontSize:22, fontWeight:"800", marginBottom:15 },
-input:{ backgroundColor:"#F1F3F7", padding:14, borderRadius:14, marginBottom:10 },
-textArea:{ backgroundColor:"#F1F3F7", padding:14, borderRadius:14, height:110, marginBottom:10, textAlignVertical:"top" },
+input:{ backgroundColor:"#fb9d32", padding:14, borderRadius:14, marginBottom:10 },
+textArea:{ backgroundColor:"#fb9d32", padding:14, borderRadius:14, height:110, marginBottom:10, textAlignVertical:"top" },
 imagePicker:{ height:150, backgroundColor:"#F1F3F7", borderRadius:14, justifyContent:"center", alignItems:"center" },
 publishBtn:{ backgroundColor:"#FF7A00", padding:16, borderRadius:16, alignItems:"center", marginTop:20 },
 publishText:{ color:"#fff", fontWeight:"700" },
