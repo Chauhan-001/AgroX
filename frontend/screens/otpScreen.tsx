@@ -6,7 +6,6 @@ import {
   TouchableOpacity,
   Alert,
 } from "react-native";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function OTPScreen({ route, navigation }) {
   const { phone } = route.params;
@@ -30,7 +29,6 @@ export default function OTPScreen({ route, navigation }) {
 
 
       }
-      await AsyncStorage.setItem("token", data.token);
 
       navigation.replace("FarmerHome");
 

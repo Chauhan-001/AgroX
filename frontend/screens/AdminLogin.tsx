@@ -6,7 +6,6 @@ import {
   TouchableOpacity,
   Alert,
 } from "react-native";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function AdminLogin({ navigation }) {
   const [adminId, setAdminId] = useState("");
@@ -32,7 +31,6 @@ export default function AdminLogin({ navigation }) {
          }
 
           const data = await response.json();
-          await AsyncStorage.setItem("token", data.token);
    
           navigation.replace("AdminHome");
    
