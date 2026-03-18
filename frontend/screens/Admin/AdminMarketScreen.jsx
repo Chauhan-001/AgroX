@@ -12,14 +12,16 @@ import {
   Alert,
   Dimensions,
   ScrollView,
+  StatusBar,
 } from "react-native";
 import { launchImageLibrary } from "react-native-image-picker";
 import { useIsFocused } from "@react-navigation/native";
 
 const { width } = Dimensions.get("window");
 
-/* ⭐ GLOBAL SESSION STORE */
 let MARKET_SESSION = [];
+
+const token = "YOUR_TOKEN_HERE";
 
 export default function AdminMarketScreen() {
 
@@ -27,20 +29,17 @@ export default function AdminMarketScreen() {
 
   const [posts, setPosts] = useState([]);
 
-  const [crop, setCrop] = useState("");
-  const [org, setOrg] = useState("");
-  const [qty, setQty] = useState("");
+  const [title, setTitle] = useState("");
+  const [product, setProduct] = useState("");
+  const [company, setCompany] = useState("");
   const [price, setPrice] = useState("");
-  const [phone, setPhone] = useState("");
-  const [email, setEmail] = useState("");
-  const [desc, setDesc] = useState("");
+  const [contactInfo, setContactInfo] = useState("");
+  const [description, setDescription] = useState("");
   const [image, setImage] = useState(null);
 
   const [editingId, setEditingId] = useState(null);
   const [modal, setModal] = useState(false);
   const [loading, setLoading] = useState(false);
-
-  const token = "YOUR_TOKEN_HERE"; // 🔥 Replace with AsyncStorage token
 
   useEffect(() => {
     if (isFocused) {
@@ -49,8 +48,8 @@ export default function AdminMarketScreen() {
   }, [isFocused]);
 
   const pickImage = () => {
-    launchImageLibrary({ mediaType: "photo" }, (res) => {
-      if (res?.assets?.length > 0) {
+    launchImageLibrary({ mediaType: "photo", quality: 0.7 }, (res) => {
+      if (!res.didCancel && res.assets?.length > 0) {
         setImage(res.assets[0].uri);
       }
     });
@@ -58,7 +57,9 @@ export default function AdminMarketScreen() {
 
   const savePost = async () => {
 
-    if (!crop.trim() || !org.trim() || !price.trim()) {
+    if (loading) return;
+
+    if (!title.trim() || !product.trim() || !price.trim()) {
       Alert.alert("Error", "Fill required fields");
       return;
     }
@@ -66,35 +67,31 @@ export default function AdminMarketScreen() {
     setLoading(true);
 
     try {
+
       const formData = new FormData();
 
-      formData.append("crop", crop);
-      formData.append("organization", org);
-      formData.append("quantity", qty);
+      formData.append("title", title);
+      formData.append("product", product);
+      formData.append("company", company);
       formData.append("price", price);
-      formData.append("phone", phone);
-      formData.append("email", email);
-      formData.append("description", desc);
+      formData.append("contactInfo", contactInfo);
+      formData.append("description", description);
 
-      // ✅ FIXED IMAGE UPLOAD
       if (image) {
-        const filename = image.split("/").pop();
-        const match = /\.(\w+)$/.exec(filename ?? "");
-        const type = match ? `image/${match[1]}` : `image`;
-
-        formData.append("images", {
+        formData.append("image", {
           uri: image,
-          name: filename || "photo.jpg",
-          type,
+          name: "photo.jpg",
+          type: "image/jpeg",
         });
       }
 
       const response = await fetch(
-        "http://192.168.29.97:7000/api/admin/market", // 🔥 corrected endpoint
+        "http://192.168.29.97:7000/api/admin/market",
         {
           method: "POST",
           headers: {
             Authorization: `Bearer ${token}`,
+            "Content-Type": "multipart/form-data",
           },
           body: formData,
         }
@@ -103,76 +100,71 @@ export default function AdminMarketScreen() {
       const data = await response.json();
 
       if (!response.ok) {
-        throw new Error(data.message || "Something went wrong");
+        throw new Error(data?.message || "Server error");
       }
 
-      // ✅ LOCAL UI UPDATE
+      /* ⭐⭐⭐ IMPORTANT FIX ⭐⭐⭐ */
       const newPost = {
-        id: editingId || Date.now().toString(),
-        crop,
-        org,
-        qty,
-        price,
-        phone,
-        email,
-        desc,
-        image,
+        id: Date.now().toString(),
+        title: title,
+        product: product,
+        company: company,
+        price: price,
+        contactInfo: contactInfo,
+        description: description,
+        image: image,
         date: new Date().toLocaleDateString(),
       };
 
       if (editingId) {
-        MARKET_SESSION = MARKET_SESSION.map((p) =>
+        MARKET_SESSION = MARKET_SESSION.map(p =>
           p.id === editingId ? newPost : p
         );
       } else {
-        MARKET_SESSION.unshift(newPost);
+        MARKET_SESSION = [newPost, ...MARKET_SESSION];
       }
 
-      setPosts([...MARKET_SESSION]);
+      setPosts([...MARKET_SESSION]);   // ⭐ immediate UI refresh
 
       Alert.alert("Success", editingId ? "Updated" : "Added");
 
-      // ✅ RESET FORM
-      setCrop("");
-      setOrg("");
-      setQty("");
+      setTitle("");
+      setProduct("");
+      setCompany("");
       setPrice("");
-      setPhone("");
-      setEmail("");
-      setDesc("");
+      setContactInfo("");
+      setDescription("");
       setImage(null);
       setEditingId(null);
       setModal(false);
 
-    } catch (error) {
-      console.log(error);
-      Alert.alert("Error", error.message);
-    } finally {
-      setLoading(false);
+    } catch (e) {
+      console.log(e);
+      Alert.alert("Error", e.message);
     }
+
+    setLoading(false);
   };
 
   const editPost = (item) => {
-    setCrop(item.crop || "");
-    setOrg(item.org || "");
-    setQty(item.qty || "");
-    setPrice(item.price || "");
-    setPhone(item.phone || "");
-    setEmail(item.email || "");
-    setDesc(item.desc || "");
-    setImage(item.image || null);
+    setTitle(item.title);
+    setProduct(item.product);
+    setCompany(item.company);
+    setPrice(item.price);
+    setContactInfo(item.contactInfo);
+    setDescription(item.description);
+    setImage(item.image);
     setEditingId(item.id);
     setModal(true);
   };
 
   const deletePost = (id) => {
-    Alert.alert("Delete Offer", "Are you sure?", [
+    Alert.alert("Delete Product", "Are you sure?", [
       { text: "Cancel" },
       {
         text: "Delete",
-        style: "destructive",
         onPress: () => {
-          MARKET_SESSION = MARKET_SESSION.filter((p) => p.id !== id);
+          MARKET_SESSION = MARKET_SESSION.filter(p => p.id !== id);
           setPosts([...MARKET_SESSION]);
         },
       },
@@ -182,22 +174,27 @@ export default function AdminMarketScreen() {
   const renderItem = ({ item }) => (
     <View style={styles.card}>
 
-      {item.image && (
+      {!!item.image && (
         <Image source={{ uri: item.image }} style={styles.image} />
       )}
 
       <View style={{ padding: 14 }}>
-        <Text style={styles.crop}>{item.crop}</Text>
-        <Text style={styles.org}>{item.org}</Text>
+        <Text style={styles.title}>{item.title}</Text>
+        <Text style={styles.product}>{item.product}</Text>
 
-        <Text style={styles.price}>
-          ₹ {item.price} / Quintal
-        </Text>
+        {!!item.company && (
+          <Text style={styles.company}>🏢 {item.company}</Text>
+        )}
 
-        {item.qty && <Text style={styles.info}>Qty: {item.qty}</Text>}
-        {item.phone && <Text style={styles.info}>📞 {item.phone}</Text>}
-        {item.email && <Text style={styles.info}>✉ {item.email}</Text>}
-        {item.desc && <Text style={styles.desc}>{item.desc}</Text>}
+        <Text style={styles.price}>₹ {item.price}</Text>
+
+        {!!item.contactInfo && (
+          <Text style={styles.info}>📞 {item.contactInfo}</Text>
+        )}
+
+        {!!item.description && (
+          <Text style={styles.desc}>{item.description}</Text>
+        )}
 
         <Text style={styles.date}>{item.date}</Text>
       </View>
@@ -218,60 +215,59 @@ export default function AdminMarketScreen() {
   return (
     <SafeAreaView style={styles.container}>
 
+      <StatusBar backgroundColor="#FF7A00" barStyle="light-content" />
+
       <View style={styles.header}>
-        <Text style={styles.headerTitle}>🌾 Market Demand</Text>
-        <Text style={styles.headerSub}>Organization crop buying offers</Text>
+        <Text style={styles.headerTitle}>🛒 Agri Market</Text>
+        <Text style={styles.headerSub}>Manage product listings</Text>
       </View>
 
       <FlatList
         data={posts}
         keyExtractor={(i) => i.id}
         renderItem={renderItem}
-        contentContainerStyle={{ padding: 16, paddingBottom: 120 }}
         ListEmptyComponent={
-          <Text style={{ textAlign: "center", marginTop: 50 }}>
-            No Offers Created
+          <Text style={{ textAlign:"center", marginTop:60 }}>
+            No Products Added
           </Text>
         }
+        contentContainerStyle={{ padding:16, paddingBottom:120 }}
       />
 
       <TouchableOpacity style={styles.fab} onPress={() => setModal(true)}>
-        <Text style={{ color: "#fff", fontSize: 30 }}>＋</Text>
+        <Text style={{ color:"#fff", fontSize:30 }}>＋</Text>
       </TouchableOpacity>
 
       <Modal visible={modal} animationType="slide">
-        <ScrollView contentContainerStyle={styles.modalContainer}>
+        <SafeAreaView style={{ flex:1 }}>
+          <ScrollView contentContainerStyle={styles.modalContainer}>
 
-          <Text style={styles.modalTitle}>
-            {editingId ? "Edit Offer" : "Create Offer"}
-          </Text>
-
-          <TextInput placeholder="Crop Name" value={crop} onChangeText={setCrop} style={styles.input}/>
-          <TextInput placeholder="Organization Name" value={org} onChangeText={setOrg} style={styles.input}/>
-          <TextInput placeholder="Quantity" value={qty} onChangeText={setQty} style={styles.input}/>
-          <TextInput placeholder="Price ₹" value={price} onChangeText={setPrice} style={styles.input}/>
-          <TextInput placeholder="Phone" value={phone} onChangeText={setPhone} style={styles.input}/>
-          <TextInput placeholder="Email" value={email} onChangeText={setEmail} style={styles.input}/>
-          <TextInput placeholder="Description" value={desc} onChangeText={setDesc} multiline style={styles.textArea}/>
-
-          <TouchableOpacity style={styles.imagePicker} onPress={pickImage}>
-            {image
-              ? <Image source={{ uri: image }} style={{ width: "100%", height: "100%", borderRadius: 12 }}/>
-              : <Text>Select Image</Text>
-            }
-          </TouchableOpacity>
-
-          <TouchableOpacity style={styles.publishBtn} onPress={savePost} disabled={loading}>
-            <Text style={styles.publishText}>
-              {loading ? "Processing..." : (editingId ? "Update Offer" : "Publish Offer")}
+            <Text style={styles.modalTitle}>
+              {editingId ? "Edit Product" : "Create Product"}
             </Text>
-          </TouchableOpacity>
 
-          <TouchableOpacity style={styles.closeBtn} onPress={() => setModal(false)}>
-            <Text style={{ color: "#555" }}>Close</Text>
-          </TouchableOpacity>
+            <TextInput placeholder="Title" value={title} onChangeText={setTitle} style={styles.input}/>
+            <TextInput placeholder="Product" value={product} onChangeText={setProduct} style={styles.input}/>
+            <TextInput placeholder="Company" value={company} onChangeText={setCompany} style={styles.input}/>
+            <TextInput placeholder="Price" value={price} onChangeText={setPrice} style={styles.input}/>
+            <TextInput placeholder="Contact Info" value={contactInfo} onChangeText={setContactInfo} style={styles.input}/>
+            <TextInput placeholder="Description" value={description} onChangeText={setDescription} multiline style={styles.textArea}/>
 
-        </ScrollView>
+            <TouchableOpacity style={styles.imagePicker} onPress={pickImage}>
+              {image
+                ? <Image source={{ uri:image }} style={{ width:"100%", height:"100%", borderRadius:12 }}/>
+                : <Text>Select Image</Text>
+              }
+            </TouchableOpacity>
+
+            <TouchableOpacity style={styles.publishBtn} onPress={savePost}>
+              <Text style={styles.publishText}>
+                {loading ? "Processing..." : "SAVE"}
+              </Text>
+            </TouchableOpacity>
+
+          </ScrollView>
+        </SafeAreaView>
       </Modal>
 
     </SafeAreaView>
@@ -285,10 +281,11 @@ const styles = StyleSheet.create({
   headerSub:{ color:"#FFE7D1", marginTop:4 },
   card:{ backgroundColor:"#fff", borderRadius:18, marginBottom:16, elevation:4, overflow:"hidden" },
   image:{ width:"100%", height:width*0.55 },
-  crop:{ fontSize:18, fontWeight:"800" },
-  org:{ fontSize:13, color:"#777" },
-  price:{ fontSize:16, color:"#2E7D32", fontWeight:"800", marginVertical:4 },
-  info:{ fontSize:13, color:"#555" },
+  title:{ fontSize:18, fontWeight:"800" },
+  product:{ fontSize:14, color:"#777" },
+  company:{ fontSize:13, color:"#555", marginTop:4 },
+  price:{ fontSize:16, color:"#2E7D32", fontWeight:"800", marginTop:4 },
+  info:{ fontSize:13, color:"#555", marginTop:4 },
   desc:{ fontSize:13, color:"#666", marginTop:6 },
   date:{ fontSize:11, color:"#999", marginTop:6 },
   actionRow:{ flexDirection:"row", justifyContent:"flex-end", padding:10 },
@@ -302,6 +299,5 @@ const styles = StyleSheet.create({
   textArea:{ backgroundColor:"#F1F3F7", padding:14, borderRadius:14, height:110, marginBottom:10, textAlignVertical:"top" },
   imagePicker:{ height:150, backgroundColor:"#F1F3F7", borderRadius:14, justifyContent:"center", alignItems:"center" },
   publishBtn:{ backgroundColor:"#FF7A00", padding:16, borderRadius:16, alignItems:"center", marginTop:20 },
-  publishText:{ color:"#fff", fontWeight:"700" },
-  closeBtn:{ alignItems:"center", marginTop:12 }
+  publishText:{ color:"#fff", fontWeight:"700" }
 });

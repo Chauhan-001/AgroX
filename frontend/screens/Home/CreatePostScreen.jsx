@@ -35,9 +35,25 @@ export default function CreatePostScreen({ onClose, onPost }) {
       return;
     }
 
-    const response={}
-    onPost(newPost);
-    onClose();
+    if (!crop) {
+      Alert.alert("Crop Required", "Please enter crop name");
+      return;
+    }
+
+    const newPost = {
+      id: Date.now().toString(),
+      image: image,
+      crop: crop,
+      location: location,
+      caption: caption,
+      user: "Farmer",
+      time: "Just now",
+      likes: 0,
+      comments: [],
+    };
+
+    onPost && onPost(newPost);   // SAFE CALL
+    onClose && onClose();
   };
 
   return (

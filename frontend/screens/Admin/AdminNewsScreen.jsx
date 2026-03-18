@@ -11,13 +11,14 @@ import {
   Image,
   Alert,
   Dimensions,
+  StatusBar,
+  Linking,
 } from "react-native";
 import { launchImageLibrary } from "react-native-image-picker";
 import { useIsFocused } from "@react-navigation/native";
 
 const { width } = Dimensions.get("window");
 
-/* ⭐ SESSION MEMORY STORE */
 let NEWS_SESSION = [];
 
 export default function AdminNewsScreen() {
@@ -26,109 +27,119 @@ export default function AdminNewsScreen() {
 
   const [posts, setPosts] = useState([]);
   const [title, setTitle] = useState("");
-  const [desc, setDesc] = useState("");
-  const [image, setImage] = useState(null);
+  const [description, setDescription] = useState("");
+  const [redirectLink, setRedirectLink] = useState("");
+  const [image, setImage] = useState("");
   const [editingId, setEditingId] = useState(null);
   const [showModal, setShowModal] = useState(false);
 
   useEffect(() => {
-    if (isFocused) {
-      setPosts([...NEWS_SESSION]);
-    }
+    if (isFocused) setPosts([...NEWS_SESSION]);
   }, [isFocused]);
 
-  const pickImage = () => {
-    launchImageLibrary({ mediaType: "photo" }, (res) => {
-      if (res && res.assets && res.assets.length > 0) {
-        setImage(res.assets[0].uri);
-      }
+  const pickImage = async () => {
+    const res = await launchImageLibrary({
+      mediaType: "photo",
+      quality: 0.7,
     });
+
+    if (!res.didCancel && res.assets?.length > 0) {
+      setImage(res.assets[0].uri);
+    }
+  };
+
+  const openLink = async (url) => {
+    if (!url) return;
+
+    let full = url.startsWith("http") ? url : "https://" + url;
+
+    const supported = await Linking.canOpenURL(full);
+
+    if (supported) Linking.openURL(full);
+    else Alert.alert("Invalid link");
   };
 
   const savePost = () => {
 
-    if (!title.trim() || !desc.trim()) return;
+    if (!title.trim()) return Alert.alert("Enter title");
+    if (!description.trim()) return Alert.alert("Enter description");
 
-    if (editingId) {
+    if (editingId !== null) {
       NEWS_SESSION = NEWS_SESSION.map(p =>
         p.id === editingId
-          ? { ...p, title, desc, image }
+          ? { ...p, title, description, image, redirectLink }
           : p
       );
     } else {
-      const newPost = {
+      NEWS_SESSION.unshift({
         id: Date.now().toString(),
         title,
-        desc,
+        description,
         image,
+        redirectLink,
         date: new Date().toLocaleDateString(),
-      };
-      NEWS_SESSION = [newPost, ...NEWS_SESSION];
+      });
     }
 
     setPosts([...NEWS_SESSION]);
 
     setTitle("");
-    setDesc("");
-    setImage(null);
+    setDescription("");
+    setRedirectLink("");
+    setImage("");
     setEditingId(null);
     setShowModal(false);
   };
 
   const editPost = (item) => {
     setTitle(item.title);
-    setDesc(item.desc);
+    setDescription(item.description);
+    setRedirectLink(item.redirectLink);
     setImage(item.image);
     setEditingId(item.id);
     setShowModal(true);
   };
 
   const deletePost = (id) => {
-    Alert.alert(
-      "Delete News",
-      "Are you sure you want to delete?",
-      [
-        { text: "Cancel" },
-        {
-          text: "Delete",
-          style: "destructive",
-          onPress: () => {
-            NEWS_SESSION = NEWS_SESSION.filter(p => p.id !== id);
-            setPosts([...NEWS_SESSION]);
-          },
+    Alert.alert("Delete", "Delete this news?", [
+      { text: "Cancel" },
+      {
+        text: "Delete",
+        onPress: () => {
+          NEWS_SESSION = NEWS_SESSION.filter(p => p.id !== id);
+          setPosts([...NEWS_SESSION]);
         },
-      ]
-    );
+      },
+    ]);
   };
 
   const renderItem = ({ item }) => (
     <View style={styles.card}>
 
-      {item.image && (
-        <Image
-          source={{ uri: item.image }}
-          style={styles.image}
-        />
-      )}
+      {item.image ? (
+        <Image source={{ uri: item.image }} style={styles.image} />
+      ) : null}
 
       <View style={styles.content}>
-        <Text style={styles.postTitle}>{item.title}</Text>
-        <Text style={styles.postDesc}>{item.desc}</Text>
+        <Text style={styles.titleText}>{item.title}</Text>
+        <Text style={styles.desc}>{item.description}</Text>
+
+        {item.redirectLink ? (
+          <TouchableOpacity onPress={() => openLink(item.redirectLink)}>
+            <Text style={styles.link}>🌐 Open Full News</Text>
+          </TouchableOpacity>
+        ) : null}
+
         <Text style={styles.date}>{item.date}</Text>
       </View>
 
+      {/* ⭐ ACTION COMPONENT */}
       <View style={styles.actionRow}>
-        <TouchableOpacity
-          style={styles.editBtn}
-          onPress={() => editPost(item)}
-        >
+        <TouchableOpacity style={styles.editBtn} onPress={() => editPost(item)}>
           <Text style={styles.actionText}>EDIT</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity
-          style={styles.deleteBtn}
-          onPress={() => deletePost(item.id)}
-        >
+        <TouchableOpacity style={styles.deleteBtn} onPress={() => deletePost(item.id)}>
           <Text style={styles.actionText}>DEL</Text>
         </TouchableOpacity>
       </View>
@@ -139,11 +150,11 @@ export default function AdminNewsScreen() {
   return (
     <SafeAreaView style={styles.container}>
 
+      <StatusBar backgroundColor="#FF7A00" barStyle="light-content" />
+
       <View style={styles.header}>
-        <Text style={styles.headerTitle}>🌾 Agriculture News</Text>
-        <Text style={styles.headerSub}>
-          Manage farming updates
-        </Text>
+        <Text style={styles.headerTitle}>📰 Agriculture News</Text>
+        <Text style={styles.headerSub}>Manage farming updates</Text>
       </View>
 
       <FlatList
@@ -152,72 +163,72 @@ export default function AdminNewsScreen() {
         renderItem={renderItem}
         contentContainerStyle={{ padding: 16, paddingBottom: 120 }}
         ListEmptyComponent={
-          <Text style={{ textAlign: "center", marginTop: 40 }}>
+          <Text style={{ textAlign: "center", marginTop: 60 }}>
             No news added
           </Text>
         }
       />
 
-      <TouchableOpacity
-        style={styles.fab}
-        onPress={() => setShowModal(true)}
-      >
-        <Text style={{ color: "#c96565", fontSize: 30 }}>＋</Text>
+      <TouchableOpacity style={styles.fab} onPress={() => setShowModal(true)}>
+        <Text style={{ color: "#fff", fontSize: 30 }}>＋</Text>
       </TouchableOpacity>
 
       <Modal visible={showModal} animationType="slide">
-        <View style={styles.modalContainer}>
+        <SafeAreaView style={{ flex: 1, backgroundColor: "#fff" }}>
 
-          <Text style={styles.modalTitle}>
-            {editingId ? "Edit News" : "Create News"}
-          </Text>
-
-          <TextInput
-            placeholder="News Title"
-            value={title}
-            onChangeText={setTitle}
-            style={styles.input}
-          />
-
-          <TextInput
-            placeholder="Description"
-            value={desc}
-            onChangeText={setDesc}
-            multiline
-            style={styles.textArea}
-          />
-
-          <TouchableOpacity
-            style={styles.imagePicker}
-            onPress={pickImage}
-          >
-            {image ? (
-              <Image
-                source={{ uri: image }}
-                style={{ width: "100%", height: "100%", borderRadius: 12 }}
-              />
-            ) : (
-              <Text>Select Image</Text>
-            )}
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            style={styles.publishBtn}
-            onPress={savePost}
-          >
-            <Text style={styles.publishText}>
-              {editingId ? "Update News" : "Publish News"}
+          <View style={styles.formHeader}>
+            <TouchableOpacity onPress={() => setShowModal(false)}>
+              <Text style={{ fontSize: 18 }}>←</Text>
+            </TouchableOpacity>
+            <Text style={styles.formTitle}>
+              {editingId ? "Edit News" : "Create News"}
             </Text>
-          </TouchableOpacity>
+          </View>
 
-          <TouchableOpacity
-            style={styles.closeBtn}
-            onPress={() => setShowModal(false)}
-          >
-            <Text style={{ color: "#555" }}>Close</Text>
-          </TouchableOpacity>
+          <View style={{ padding: 20 }}>
 
-        </View>
+            <TextInput
+              placeholder="Title"
+              value={title}
+              onChangeText={setTitle}
+              style={styles.input}
+            />
+
+            <TextInput
+              placeholder="Description"
+              value={description}
+              onChangeText={setDescription}
+              multiline
+              style={styles.textArea}
+            />
+
+            <TextInput
+              placeholder="Redirect Link"
+              value={redirectLink}
+              onChangeText={setRedirectLink}
+              style={styles.input}
+            />
+
+            <TouchableOpacity style={styles.imagePicker} onPress={pickImage}>
+              {image ? (
+                <Image
+                  source={{ uri: image }}
+                  style={{ width: "100%", height: "100%", borderRadius: 12 }}
+                />
+              ) : (
+                <Text>Select Image</Text>
+              )}
+            </TouchableOpacity>
+
+            <TouchableOpacity style={styles.publish} onPress={savePost}>
+              <Text style={{ color: "#fff", fontWeight: "700" }}>
+                SAVE NEWS
+              </Text>
+            </TouchableOpacity>
+
+          </View>
+
+        </SafeAreaView>
       </Modal>
 
     </SafeAreaView>
@@ -231,21 +242,45 @@ const styles = StyleSheet.create({
   header: {
     backgroundColor: "#FF7A00",
     paddingTop: 55,
-    paddingBottom: 25,
+    paddingBottom: 28,
     paddingHorizontal: 18,
-    borderBottomLeftRadius: 25,
-    borderBottomRightRadius: 25,
+    borderBottomLeftRadius: 28,
+    borderBottomRightRadius: 28,
   },
 
-  headerTitle: { fontSize: 24, fontWeight: "800", color: "#fff" },
-  headerSub: { color: "#FFE7D1", marginTop: 4 },
+  headerTitle: {
+    fontSize: 24,
+    fontWeight: "800",
+    color: "#fff",
+  },
+
+  headerSub: {
+    color: "#FFE7D1",
+    marginTop: 4,
+  },
+
+  formHeader: {
+    flexDirection: "row",
+    alignItems: "center",
+    padding: 15,
+    borderBottomWidth: 1,
+    borderColor: "#eee",
+    gap: 15,
+  },
+
+  formTitle: {
+    fontSize: 18,
+    fontWeight: "700",
+  },
 
   card: {
     backgroundColor: "#fff",
-    borderRadius: 18,
-    marginBottom: 16,
-    elevation: 4,
+    borderRadius: 16,
+    marginBottom: 15,
     overflow: "hidden",
+    elevation: 3,
+    borderWidth: 1,
+    borderColor: "#e0e0e0",
   },
 
   image: {
@@ -253,11 +288,19 @@ const styles = StyleSheet.create({
     height: width * 0.55,
   },
 
-  content: { padding: 14 },
+  content: { padding: 12 },
 
-  postTitle: { fontSize: 16, fontWeight: "700" },
-  postDesc: { fontSize: 13, color: "#555", marginTop: 3 },
-  date: { fontSize: 11, color: "#999", marginTop: 6 },
+  titleText: { fontSize: 16, fontWeight: "700" },
+  desc: { fontSize: 13, color: "#555", marginTop: 3 },
+
+  link: {
+    fontSize: 14,
+    color: "#1976D2",
+    marginTop: 6,
+    fontWeight: "700",
+  },
+
+  date: { fontSize: 11, color: "#999", marginTop: 5 },
 
   actionRow: {
     flexDirection: "row",
@@ -274,13 +317,13 @@ const styles = StyleSheet.create({
   },
 
   deleteBtn: {
-    backgroundColor: "#bf615f",
+    backgroundColor: "#E53935",
     paddingHorizontal: 12,
     paddingVertical: 5,
     borderRadius: 20,
   },
 
-  actionText: { color: "#dfaaaa", fontSize: 12 },
+  actionText: { color: "#fff", fontSize: 12 },
 
   fab: {
     position: "absolute",
@@ -295,52 +338,37 @@ const styles = StyleSheet.create({
     elevation: 8,
   },
 
-  modalContainer: {
-    flex: 1,
-    backgroundColor: "#fff",
-    padding: 20,
-    paddingTop: 60,
-  },
-
-  modalTitle: { fontSize: 22, fontWeight: "800", marginBottom: 15 },
-
   input: {
-    backgroundColor: "#f48d44",
+    backgroundColor: "#F1F3F7",
     padding: 14,
-    borderRadius: 14,
-    marginBottom: 12,
+    borderRadius: 12,
+    marginBottom: 10,
   },
 
   textArea: {
-    backgroundColor: "#f48d44",
+    backgroundColor: "#F1F3F7",
     padding: 14,
-    borderRadius: 14,
+    borderRadius: 12,
     height: 120,
-    marginBottom: 12,
+    marginBottom: 10,
     textAlignVertical: "top",
   },
 
   imagePicker: {
     height: 160,
     backgroundColor: "#F1F3F7",
-    borderRadius: 14,
+    borderRadius: 12,
     justifyContent: "center",
     alignItems: "center",
+    marginTop: 5,
   },
 
-  publishBtn: {
+  publish: {
     backgroundColor: "#FF7A00",
     padding: 16,
-    borderRadius: 16,
+    borderRadius: 14,
     alignItems: "center",
     marginTop: 20,
-  },
-
-  publishText: { color: "#fff", fontWeight: "700" },
-
-  closeBtn: {
-    alignItems: "center",
-    marginTop: 12,
   },
 
 });
