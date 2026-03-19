@@ -4,3 +4,39 @@ numpy==1.26.4
 scikit-learn==1.5.1
 gunicorn==23.0.0
 joblib==1.4.2
+
+
+
+
+
+
+# <h2>Select Recommended Crop</h2>
+
+# {% for crop in crops %}
+
+# <div style="margin-bottom:25px; padding:15px; border:1px solid #444; border-radius:10px; background:#111;">
+
+# <form action="/crop_detail" method="post">
+# <input type="hidden" name="crop" value="{{ crop }}">
+# <button type="submit">{{ crop }}</button>
+# </form>
+
+# {% if crop in crop_details %}
+
+# <p>💸 Cost: ₹ {{ crop_details[crop].cost }}</p>
+# <p>🌾 Yield: {{ crop_details[crop].yield }} quintal</p>
+# <p>💰 Price: ₹ {{ crop_details[crop].price }} /quintal</p>
+# <p>⚠ Risk: {{ crop_details[crop].risk }}</p>
+# <p>📊 Revenue: ₹ {{ crop_details[crop].revenue }}</p>
+
+# <p style="color: {{ 'red' if crop_details[crop].profit < 0 else 'lightgreen' }}">
+# 🔥 Profit: ₹ {{ crop_details[crop].profit }}
+# </p>
+
+# {% endif %}
+
+# </div>
+
+# {% endfor %}
+
+# <a href="/">⬅ Back</a>

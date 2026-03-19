@@ -1,0 +1,283 @@
+{
+"rice":[
+{"stage":"Land Preparation","time":"Week 1","activity":"Deep ploughing and puddling field","fertilizer":"Apply 10-15 ton FYM/ha","npk":"NPK 40:20:20 basal","water":"Keep soil moist","notes":"Level field properly"},
+{"stage":"Seed Selection","time":"Week 1","activity":"Select disease-free seeds","fertilizer":"Seed treatment fungicide","npk":"None","water":"None","notes":"Use certified seeds"},
+{"stage":"Nursery Preparation","time":"Week 2","activity":"Prepare wet nursery","fertilizer":"Apply compost","npk":"DAP 20 kg/ha","water":"Maintain shallow water","notes":"Sow evenly"},
+{"stage":"Transplanting","time":"Week 4","activity":"Transplant seedlings to field","fertilizer":"Apply nitrogen basal","npk":"Urea 25 kg/ha","water":"Maintain 5 cm water","notes":"Spacing 20x15 cm"},
+{"stage":"Vegetative Growth","time":"Week 5-8","activity":"Weeding and tillering","fertilizer":"Top dress nitrogen","npk":"Urea 30 kg/ha","water":"Water every 4 days","notes":"Remove weeds"},
+{"stage":"Panicle Initiation","time":"Week 9","activity":"Maintain nutrients","fertilizer":"Apply potassium","npk":"MOP 20 kg/ha","water":"Maintain shallow water","notes":"Avoid drought"},
+{"stage":"Flowering","time":"Week 11","activity":"Protect crop from pests","fertilizer":"Micronutrient spray","npk":"None","water":"Regular irrigation","notes":"Avoid stress"},
+{"stage":"Grain Filling","time":"Week 13","activity":"Maintain moisture","fertilizer":"None","npk":"None","water":"Irrigate every 5 days","notes":"Prevent pests"},
+{"stage":"Maturity","time":"Week 15","activity":"Stop fertilizer application","fertilizer":"None","npk":"None","water":"Reduce irrigation","notes":"Field drying"},
+{"stage":"Harvest","time":"Week 16","activity":"Harvest when grains turn golden","fertilizer":"None","npk":"None","water":"Stop irrigation","notes":"Dry grains before storage"}
+],
+
+"maize":[
+{"stage":"Land Preparation","time":"Week 1","activity":"Plough and level soil","fertilizer":"Apply FYM 10 ton/ha","npk":"NPK 60:40:20","water":"Moist soil","notes":"Good drainage"},
+{"stage":"Seed Treatment","time":"Week 1","activity":"Treat seeds with fungicide","fertilizer":"None","npk":"None","water":"None","notes":"Protect against fungi"},
+{"stage":"Sowing","time":"Week 2","activity":"Sow seeds 5 cm depth","fertilizer":"Basal fertilizer","npk":"NPK 120:60:40","water":"Irrigate after sowing","notes":"Spacing 60x20 cm"},
+{"stage":"Germination","time":"Week 3","activity":"Monitor seedling growth","fertilizer":"None","npk":"None","water":"Light irrigation","notes":"Protect seedlings"},
+{"stage":"Vegetative Stage","time":"Week 4-6","activity":"Weeding and thinning","fertilizer":"Nitrogen top dressing","npk":"Urea 30 kg/ha","water":"Irrigate weekly","notes":"Remove weeds"},
+{"stage":"Knee Height Stage","time":"Week 6","activity":"Earthing up soil","fertilizer":"Apply nitrogen","npk":"Urea 25 kg","water":"Irrigate","notes":"Improve root support"},
+{"stage":"Tasseling","time":"Week 8","activity":"Ensure nutrient supply","fertilizer":"Potassium spray","npk":"K2O 20 kg","water":"Regular irrigation","notes":"Avoid drought"},
+{"stage":"Silking","time":"Week 9","activity":"Pollination stage","fertilizer":"None","npk":"None","water":"Maintain moisture","notes":"Critical stage"},
+{"stage":"Grain Development","time":"Week 10-11","activity":"Kernel filling","fertilizer":"None","npk":"None","water":"Irrigate every 5 days","notes":"Avoid water stress"},
+{"stage":"Harvest","time":"Week 12","activity":"Harvest mature cobs","fertilizer":"None","npk":"None","water":"Stop irrigation","notes":"Dry before storage"}
+],
+
+"chickpea":[
+{"stage":"Land Preparation","time":"Week 1","activity":"Prepare seedbed","fertilizer":"Apply compost","npk":"NPK 20:40:20","water":"Moist soil","notes":"Well drained soil"},
+{"stage":"Seed Treatment","time":"Week 1","activity":"Treat seeds Rhizobium","fertilizer":"None","npk":"None","water":"None","notes":"Nitrogen fixation"},
+{"stage":"Sowing","time":"Week 2","activity":"Sow seeds 5 cm deep","fertilizer":"DAP basal","npk":"DAP 100 kg/ha","water":"Light irrigation","notes":"Spacing 30x10 cm"},
+{"stage":"Germination","time":"Week 3","activity":"Seedling emergence","fertilizer":"None","npk":"None","water":"Minimal irrigation","notes":"Avoid waterlogging"},
+{"stage":"Vegetative Growth","time":"Week 4-6","activity":"Weeding","fertilizer":"None","npk":"None","water":"Irrigate every 10 days","notes":"Remove weeds"},
+{"stage":"Branching","time":"Week 7","activity":"Crop branching","fertilizer":"Micronutrients","npk":"None","water":"Light irrigation","notes":"Healthy growth"},
+{"stage":"Flowering","time":"Week 9","activity":"Flower formation","fertilizer":"Potassium spray","npk":"K 10 kg","water":"Maintain moisture","notes":"Avoid drought"},
+{"stage":"Pod Formation","time":"Week 10-11","activity":"Pod development","fertilizer":"None","npk":"None","water":"Irrigate weekly","notes":"Pest control"},
+{"stage":"Maturity","time":"Week 13","activity":"Pods dry","fertilizer":"None","npk":"None","water":"Reduce irrigation","notes":"Prepare harvest"},
+{"stage":"Harvest","time":"Week 14","activity":"Harvest dry plants","fertilizer":"None","npk":"None","water":"None","notes":"Dry before storage"}
+],
+
+"coconut":[
+{"stage":"Land Preparation","time":"Week 1","activity":"Deep ploughing and pit preparation","fertilizer":"Apply 20 kg compost per pit","npk":"NPK 50:25:25","water":"Moist soil","notes":"Spacing 7x7 m"},
+{"stage":"Seedling Selection","time":"Week 1","activity":"Select healthy seedlings","fertilizer":"None","npk":"None","water":"None","notes":"Use certified seedlings"},
+{"stage":"Planting","time":"Week 2","activity":"Plant seedlings in pits","fertilizer":"Apply organic manure","npk":"None","water":"Heavy irrigation","notes":"Plant at correct depth"},
+{"stage":"Establishment","time":"Week 3-8","activity":"Ensure plant establishment","fertilizer":"Apply compost","npk":"None","water":"Irrigate weekly","notes":"Remove weeds"},
+{"stage":"Vegetative Growth","time":"Month 3-12","activity":"Leaf growth","fertilizer":"Apply NPK fertilizer","npk":"NPK 100:50:50","water":"Irrigate every 7 days","notes":"Mulching recommended"},
+{"stage":"Flower Initiation","time":"Year 3","activity":"Maintain nutrient supply","fertilizer":"Potassium fertilizer","npk":"K 50 kg","water":"Regular irrigation","notes":"Avoid drought"},
+{"stage":"Flowering","time":"Year 3-4","activity":"Flower development","fertilizer":"Micronutrient spray","npk":"None","water":"Irrigate regularly","notes":"Protect from pests"},
+{"stage":"Nut Development","time":"Year 4","activity":"Nut formation","fertilizer":"Apply balanced fertilizer","npk":"NPK 150:80:80","water":"Irrigate every 5 days","notes":"Maintain soil moisture"},
+{"stage":"Maturity","time":"Year 5","activity":"Coconuts mature","fertilizer":"None","npk":"None","water":"Normal irrigation","notes":"Avoid water stress"},
+{"stage":"Harvest","time":"Year 5+","activity":"Harvest mature coconuts","fertilizer":"None","npk":"None","water":"Normal irrigation","notes":"Harvest every 45 days"}
+],
+
+"mango":[
+{"stage":"Land Preparation","time":"Week 1","activity":"Prepare field and pits","fertilizer":"Apply 20 kg FYM per pit","npk":"NPK 50:50:50","water":"Moist soil","notes":"Spacing 10x10 m"},
+{"stage":"Planting","time":"Week 2","activity":"Plant grafted seedlings","fertilizer":"Organic manure","npk":"None","water":"Irrigate after planting","notes":"Firm soil around roots"},
+{"stage":"Establishment","time":"Month 1-3","activity":"Plant establishment","fertilizer":"Compost","npk":"None","water":"Weekly irrigation","notes":"Remove weeds"},
+{"stage":"Vegetative Growth","time":"Year 1-3","activity":"Tree growth","fertilizer":"Apply NPK annually","npk":"NPK 200:100:100","water":"Irrigate every 10 days","notes":"Prune branches"},
+{"stage":"Flower Initiation","time":"Year 3","activity":"Flower buds appear","fertilizer":"Potassium fertilizer","npk":"K 40 kg","water":"Light irrigation","notes":"Avoid excess nitrogen"},
+{"stage":"Flowering","time":"Year 3","activity":"Flower blooming","fertilizer":"Micronutrient spray","npk":"None","water":"Maintain soil moisture","notes":"Protect from pests"},
+{"stage":"Fruit Set","time":"Year 3","activity":"Fruit formation","fertilizer":"Balanced fertilizer","npk":"NPK 100:50:50","water":"Irrigate weekly","notes":"Avoid water stress"},
+{"stage":"Fruit Development","time":"Year 3","activity":"Fruit growth","fertilizer":"Potassium spray","npk":"None","water":"Regular irrigation","notes":"Protect from insects"},
+{"stage":"Maturity","time":"Year 4","activity":"Fruits ripen","fertilizer":"None","npk":"None","water":"Reduce irrigation","notes":"Check fruit color"},
+{"stage":"Harvest","time":"Year 4","activity":"Harvest mature fruits","fertilizer":"None","npk":"None","water":"None","notes":"Handle carefully"}
+],
+
+"grapes":[
+{"stage":"Land Preparation","time":"Week 1","activity":"Deep ploughing and trellis setup","fertilizer":"Apply FYM","npk":"NPK 50:50:50","water":"Moist soil","notes":"Good drainage"},
+{"stage":"Planting","time":"Week 2","activity":"Plant cuttings","fertilizer":"Compost","npk":"None","water":"Irrigate after planting","notes":"Spacing 3x2 m"},
+{"stage":"Vegetative Growth","time":"Month 1-6","activity":"Vine growth","fertilizer":"Apply nitrogen","npk":"Urea 30 kg","water":"Irrigate weekly","notes":"Pruning required"},
+{"stage":"Training","time":"Month 3","activity":"Train vines on trellis","fertilizer":"None","npk":"None","water":"Regular irrigation","notes":"Support vines"},
+{"stage":"Flowering","time":"Month 7","activity":"Flower formation","fertilizer":"Potassium fertilizer","npk":"K 20 kg","water":"Light irrigation","notes":"Avoid water stress"},
+{"stage":"Fruit Set","time":"Month 7","activity":"Berry formation","fertilizer":"Balanced fertilizer","npk":"NPK 40:20:20","water":"Irrigate weekly","notes":"Protect from pests"},
+{"stage":"Fruit Development","time":"Month 8","activity":"Berry growth","fertilizer":"Micronutrient spray","npk":"None","water":"Regular irrigation","notes":"Thin bunches"},
+{"stage":"Ripening","time":"Month 9","activity":"Sugar accumulation","fertilizer":"None","npk":"None","water":"Reduce irrigation","notes":"Improve flavor"},
+{"stage":"Maturity","time":"Month 10","activity":"Grapes mature","fertilizer":"None","npk":"None","water":"Minimal irrigation","notes":"Check sweetness"},
+{"stage":"Harvest","time":"Month 10","activity":"Harvest grape bunches","fertilizer":"None","npk":"None","water":"None","notes":"Handle carefully"}
+],
+"banana":[
+{"stage":"Land Preparation","time":"Week 1","activity":"Prepare pits and loosen soil","fertilizer":"Apply 15-20 kg FYM per pit","npk":"NPK 50:30:30","water":"Moist soil","notes":"Spacing 2x2 m"},
+{"stage":"Planting","time":"Week 2","activity":"Plant healthy suckers","fertilizer":"Organic manure","npk":"None","water":"Irrigate after planting","notes":"Firm soil around plant"},
+{"stage":"Establishment","time":"Week 3-4","activity":"Plant establishment","fertilizer":"Apply compost","npk":"None","water":"Irrigate every 4 days","notes":"Remove weeds"},
+{"stage":"Vegetative Growth","time":"Month 2-4","activity":"Leaf growth","fertilizer":"Apply nitrogen fertilizer","npk":"Urea 30 kg/ha","water":"Irrigate every 3 days","notes":"Mulching recommended"},
+{"stage":"Pseudostem Growth","time":"Month 4-5","activity":"Stem thickening","fertilizer":"Balanced fertilizer","npk":"NPK 60:30:30","water":"Regular irrigation","notes":"Support plant"},
+{"stage":"Flower Initiation","time":"Month 6","activity":"Flower bud formation","fertilizer":"Potassium fertilizer","npk":"K 30 kg","water":"Maintain soil moisture","notes":"Avoid drought"},
+{"stage":"Flowering","time":"Month 7","activity":"Flower emergence","fertilizer":"Micronutrient spray","npk":"None","water":"Irrigate regularly","notes":"Protect from pests"},
+{"stage":"Fruit Development","time":"Month 8","activity":"Fruit bunch formation","fertilizer":"Balanced fertilizer","npk":"NPK 40:20:20","water":"Irrigate every 3 days","notes":"Bag fruit bunch"},
+{"stage":"Maturity","time":"Month 9","activity":"Fruit ripening","fertilizer":"None","npk":"None","water":"Reduce irrigation","notes":"Check fruit size"},
+{"stage":"Harvest","time":"Month 10","activity":"Harvest mature bunches","fertilizer":"None","npk":"None","water":"None","notes":"Handle carefully"}
+],
+
+"watermelon":[
+{"stage":"Land Preparation","time":"Week 1","activity":"Deep ploughing and bed preparation","fertilizer":"Apply FYM 10 ton/ha","npk":"NPK 40:20:20","water":"Moist soil","notes":"Good drainage"},
+{"stage":"Seed Treatment","time":"Week 1","activity":"Treat seeds","fertilizer":"Fungicide treatment","npk":"None","water":"None","notes":"Healthy germination"},
+{"stage":"Sowing","time":"Week 2","activity":"Sow seeds in hills","fertilizer":"Basal fertilizer","npk":"DAP 50 kg","water":"Light irrigation","notes":"Spacing 2x1 m"},
+{"stage":"Germination","time":"Week 3","activity":"Seedling emergence","fertilizer":"None","npk":"None","water":"Irrigate lightly","notes":"Protect seedlings"},
+{"stage":"Vegetative Growth","time":"Week 4-5","activity":"Vine growth","fertilizer":"Nitrogen fertilizer","npk":"Urea 25 kg","water":"Irrigate weekly","notes":"Remove weeds"},
+{"stage":"Flowering","time":"Week 6","activity":"Flower formation","fertilizer":"Potassium fertilizer","npk":"K 20 kg","water":"Maintain moisture","notes":"Encourage pollination"},
+{"stage":"Fruit Set","time":"Week 7","activity":"Fruit formation","fertilizer":"Balanced fertilizer","npk":"NPK 30:20:20","water":"Irrigate every 5 days","notes":"Thin extra fruits"},
+{"stage":"Fruit Development","time":"Week 8","activity":"Fruit enlargement","fertilizer":"Micronutrients","npk":"None","water":"Regular irrigation","notes":"Prevent pests"},
+{"stage":"Maturity","time":"Week 9","activity":"Fruit ripening","fertilizer":"None","npk":"None","water":"Reduce irrigation","notes":"Check fruit color"},
+{"stage":"Harvest","time":"Week 10","activity":"Harvest ripe fruits","fertilizer":"None","npk":"None","water":"None","notes":"Cut carefully"}
+],
+
+"muskmelon":[
+{"stage":"Land Preparation","time":"Week 1","activity":"Prepare raised beds","fertilizer":"Apply compost","npk":"NPK 40:20:20","water":"Moist soil","notes":"Good drainage"},
+{"stage":"Seed Treatment","time":"Week 1","activity":"Treat seeds","fertilizer":"Fungicide treatment","npk":"None","water":"None","notes":"Prevent diseases"},
+{"stage":"Sowing","time":"Week 2","activity":"Sow seeds in hills","fertilizer":"Basal fertilizer","npk":"DAP 40 kg","water":"Light irrigation","notes":"Spacing 1.5x1 m"},
+{"stage":"Germination","time":"Week 3","activity":"Seedling emergence","fertilizer":"None","npk":"None","water":"Irrigate lightly","notes":"Protect seedlings"},
+{"stage":"Vegetative Growth","time":"Week 4","activity":"Vine growth","fertilizer":"Nitrogen fertilizer","npk":"Urea 20 kg","water":"Weekly irrigation","notes":"Remove weeds"},
+{"stage":"Flowering","time":"Week 5","activity":"Flower formation","fertilizer":"Potassium fertilizer","npk":"K 15 kg","water":"Maintain soil moisture","notes":"Encourage pollination"},
+{"stage":"Fruit Set","time":"Week 6","activity":"Fruit formation","fertilizer":"Balanced fertilizer","npk":"NPK 20:20:20","water":"Irrigate every 5 days","notes":"Remove weak fruits"},
+{"stage":"Fruit Development","time":"Week 7","activity":"Fruit enlargement","fertilizer":"Micronutrients","npk":"None","water":"Regular irrigation","notes":"Protect from pests"},
+{"stage":"Maturity","time":"Week 8","activity":"Fruit ripening","fertilizer":"None","npk":"None","water":"Reduce irrigation","notes":"Check aroma"},
+{"stage":"Harvest","time":"Week 9","activity":"Harvest ripe fruits","fertilizer":"None","npk":"None","water":"None","notes":"Handle carefully"}
+],
+
+"cotton":[
+{"stage":"Land Preparation","time":"Week 1","activity":"Deep ploughing","fertilizer":"Apply FYM","npk":"NPK 60:30:30","water":"Moist soil","notes":"Well drained soil"},
+{"stage":"Seed Treatment","time":"Week 1","activity":"Treat seeds","fertilizer":"Fungicide","npk":"None","water":"None","notes":"Disease prevention"},
+{"stage":"Sowing","time":"Week 2","activity":"Sow seeds","fertilizer":"Basal fertilizer","npk":"DAP 50 kg","water":"Irrigate after sowing","notes":"Spacing 90x45 cm"},
+{"stage":"Germination","time":"Week 3","activity":"Seedling growth","fertilizer":"None","npk":"None","water":"Light irrigation","notes":"Protect seedlings"},
+{"stage":"Vegetative Growth","time":"Week 4-6","activity":"Leaf growth","fertilizer":"Nitrogen fertilizer","npk":"Urea 30 kg","water":"Irrigate weekly","notes":"Weeding required"},
+{"stage":"Square Formation","time":"Week 7","activity":"Bud formation","fertilizer":"Balanced fertilizer","npk":"NPK 40:20:20","water":"Regular irrigation","notes":"Avoid drought"},
+{"stage":"Flowering","time":"Week 8","activity":"Flower development","fertilizer":"Micronutrient spray","npk":"None","water":"Maintain soil moisture","notes":"Pest control"},
+{"stage":"Boll Formation","time":"Week 9-10","activity":"Cotton boll growth","fertilizer":"Potassium fertilizer","npk":"K 20 kg","water":"Irrigate every 5 days","notes":"Healthy bolls"},
+{"stage":"Maturity","time":"Week 11","activity":"Bolls open","fertilizer":"None","npk":"None","water":"Reduce irrigation","notes":"Prepare harvest"},
+{"stage":"Harvest","time":"Week 12","activity":"Pick mature cotton","fertilizer":"None","npk":"None","water":"None","notes":"Dry cotton before storage"}
+],
+"jute":[
+{"stage":"Land Preparation","time":"Week 1","activity":"Deep ploughing and leveling","fertilizer":"Apply FYM 8 ton/ha","npk":"NPK 40:20:20","water":"Moist soil","notes":"Fine seedbed required"},
+{"stage":"Seed Treatment","time":"Week 1","activity":"Treat seeds with fungicide","fertilizer":"Fungicide","npk":"None","water":"None","notes":"Disease prevention"},
+{"stage":"Sowing","time":"Week 2","activity":"Broadcast seeds evenly","fertilizer":"Basal fertilizer","npk":"DAP 40 kg","water":"Light irrigation","notes":"Spacing 30 cm"},
+{"stage":"Germination","time":"Week 3","activity":"Seedling emergence","fertilizer":"None","npk":"None","water":"Maintain moisture","notes":"Protect seedlings"},
+{"stage":"Vegetative Growth","time":"Week 4-6","activity":"Rapid plant growth","fertilizer":"Nitrogen fertilizer","npk":"Urea 25 kg","water":"Irrigate weekly","notes":"Remove weeds"},
+{"stage":"Stem Development","time":"Week 7","activity":"Stem thickening","fertilizer":"Balanced fertilizer","npk":"NPK 30:20:20","water":"Regular irrigation","notes":"Healthy fiber growth"},
+{"stage":"Flower Initiation","time":"Week 9","activity":"Flower buds appear","fertilizer":"Potassium fertilizer","npk":"K 15 kg","water":"Maintain soil moisture","notes":"Avoid drought"},
+{"stage":"Fiber Development","time":"Week 10","activity":"Fiber strengthening","fertilizer":"Micronutrient spray","npk":"None","water":"Irrigate every 5 days","notes":"Healthy stems"},
+{"stage":"Maturity","time":"Week 12","activity":"Plants mature","fertilizer":"None","npk":"None","water":"Reduce irrigation","notes":"Prepare harvest"},
+{"stage":"Harvest","time":"Week 13","activity":"Cut plants for fiber extraction","fertilizer":"None","npk":"None","water":"None","notes":"Retting process required"}
+],
+
+"coffee":[
+{"stage":"Land Preparation","time":"Week 1","activity":"Prepare shaded field","fertilizer":"Apply organic compost","npk":"NPK 40:30:30","water":"Moist soil","notes":"Shade trees required"},
+{"stage":"Planting","time":"Week 2","activity":"Plant coffee seedlings","fertilizer":"Compost","npk":"None","water":"Irrigate after planting","notes":"Spacing 2x2 m"},
+{"stage":"Establishment","time":"Month 1-3","activity":"Plant establishment","fertilizer":"Organic manure","npk":"None","water":"Weekly irrigation","notes":"Remove weeds"},
+{"stage":"Vegetative Growth","time":"Year 1-2","activity":"Leaf growth","fertilizer":"Apply nitrogen fertilizer","npk":"Urea 30 kg","water":"Irrigate every 10 days","notes":"Pruning required"},
+{"stage":"Flower Initiation","time":"Year 2","activity":"Flower buds appear","fertilizer":"Potassium fertilizer","npk":"K 25 kg","water":"Light irrigation","notes":"Avoid drought"},
+{"stage":"Flowering","time":"Year 2","activity":"White coffee flowers bloom","fertilizer":"Micronutrient spray","npk":"None","water":"Maintain soil moisture","notes":"Protect flowers"},
+{"stage":"Fruit Set","time":"Year 3","activity":"Cherry formation","fertilizer":"Balanced fertilizer","npk":"NPK 40:20:20","water":"Regular irrigation","notes":"Avoid pests"},
+{"stage":"Fruit Development","time":"Year 3","activity":"Coffee cherry growth","fertilizer":"Potassium fertilizer","npk":"K 20 kg","water":"Irrigate every 7 days","notes":"Healthy cherries"},
+{"stage":"Maturity","time":"Year 3","activity":"Cherries turn red","fertilizer":"None","npk":"None","water":"Reduce irrigation","notes":"Check ripeness"},
+{"stage":"Harvest","time":"Year 3","activity":"Harvest ripe cherries","fertilizer":"None","npk":"None","water":"None","notes":"Hand picking recommended"}
+],
+
+"apple":[
+{"stage":"Land Preparation","time":"Week 1","activity":"Prepare orchard pits","fertilizer":"Apply 20 kg FYM per pit","npk":"NPK 60:40:40","water":"Moist soil","notes":"Spacing 5x5 m"},
+{"stage":"Planting","time":"Week 2","activity":"Plant grafted saplings","fertilizer":"Organic manure","npk":"None","water":"Irrigate after planting","notes":"Firm soil around roots"},
+{"stage":"Establishment","time":"Month 1-6","activity":"Sapling establishment","fertilizer":"Apply compost","npk":"None","water":"Weekly irrigation","notes":"Remove weeds"},
+{"stage":"Vegetative Growth","time":"Year 1-2","activity":"Branch growth","fertilizer":"Nitrogen fertilizer","npk":"Urea 30 kg","water":"Irrigate every 10 days","notes":"Pruning required"},
+{"stage":"Flower Initiation","time":"Year 3","activity":"Flower buds appear","fertilizer":"Potassium fertilizer","npk":"K 30 kg","water":"Light irrigation","notes":"Avoid frost"},
+{"stage":"Flowering","time":"Year 3","activity":"Pink blossoms bloom","fertilizer":"Micronutrient spray","npk":"None","water":"Maintain moisture","notes":"Bee pollination needed"},
+{"stage":"Fruit Set","time":"Year 3","activity":"Small apples form","fertilizer":"Balanced fertilizer","npk":"NPK 40:20:20","water":"Regular irrigation","notes":"Thin fruits"},
+{"stage":"Fruit Development","time":"Year 3","activity":"Fruit enlargement","fertilizer":"Potassium fertilizer","npk":"K 20 kg","water":"Irrigate weekly","notes":"Protect from pests"},
+{"stage":"Maturity","time":"Year 4","activity":"Apples ripen","fertilizer":"None","npk":"None","water":"Reduce irrigation","notes":"Check fruit color"},
+{"stage":"Harvest","time":"Year 4","activity":"Harvest ripe apples","fertilizer":"None","npk":"None","water":"None","notes":"Handle carefully"}
+],
+
+"mungbean":[
+{"stage":"Land Preparation","time":"Week 1","activity":"Prepare seedbed","fertilizer":"Apply compost","npk":"NPK 20:40:20","water":"Moist soil","notes":"Well drained soil"},
+{"stage":"Seed Treatment","time":"Week 1","activity":"Treat seeds with Rhizobium","fertilizer":"None","npk":"None","water":"None","notes":"Improve nitrogen fixation"},
+{"stage":"Sowing","time":"Week 2","activity":"Sow seeds in rows","fertilizer":"DAP basal","npk":"DAP 50 kg","water":"Light irrigation","notes":"Spacing 30x10 cm"},
+{"stage":"Germination","time":"Week 3","activity":"Seedling emergence","fertilizer":"None","npk":"None","water":"Minimal irrigation","notes":"Avoid waterlogging"},
+{"stage":"Vegetative Growth","time":"Week 4","activity":"Leaf growth","fertilizer":"None","npk":"None","water":"Irrigate weekly","notes":"Remove weeds"},
+{"stage":"Branching","time":"Week 5","activity":"Branch formation","fertilizer":"Micronutrients","npk":"None","water":"Light irrigation","notes":"Healthy plants"},
+{"stage":"Flowering","time":"Week 6","activity":"Yellow flowers appear","fertilizer":"Potassium fertilizer","npk":"K 10 kg","water":"Maintain soil moisture","notes":"Avoid drought"},
+{"stage":"Pod Formation","time":"Week 7","activity":"Pods develop","fertilizer":"None","npk":"None","water":"Irrigate every 5 days","notes":"Pest control"},
+{"stage":"Maturity","time":"Week 8","activity":"Pods dry","fertilizer":"None","npk":"None","water":"Reduce irrigation","notes":"Prepare harvest"},
+{"stage":"Harvest","time":"Week 9","activity":"Harvest mature pods","fertilizer":"None","npk":"None","water":"None","notes":"Dry seeds before storage"}
+],
+"orange":[
+{"stage":"Land Preparation","time":"Week 1","activity":"Prepare orchard pits","fertilizer":"Apply 15 kg FYM per pit","npk":"NPK 60:30:30","water":"Moist soil","notes":"Spacing 6x6 m"},
+{"stage":"Planting","time":"Week 2","activity":"Plant grafted saplings","fertilizer":"Organic manure","npk":"None","water":"Irrigate after planting","notes":"Firm soil around roots"},
+{"stage":"Establishment","time":"Month 1-6","activity":"Plant establishment","fertilizer":"Apply compost","npk":"None","water":"Weekly irrigation","notes":"Remove weeds"},
+{"stage":"Vegetative Growth","time":"Year 1-2","activity":"Branch and leaf growth","fertilizer":"Nitrogen fertilizer","npk":"Urea 30 kg","water":"Irrigate every 10 days","notes":"Pruning required"},
+{"stage":"Flower Initiation","time":"Year 2","activity":"Flower buds appear","fertilizer":"Potassium fertilizer","npk":"K 25 kg","water":"Light irrigation","notes":"Avoid drought"},
+{"stage":"Flowering","time":"Year 2","activity":"White blossoms bloom","fertilizer":"Micronutrient spray","npk":"None","water":"Maintain moisture","notes":"Bee pollination"},
+{"stage":"Fruit Set","time":"Year 2","activity":"Small oranges form","fertilizer":"Balanced fertilizer","npk":"NPK 40:20:20","water":"Regular irrigation","notes":"Avoid stress"},
+{"stage":"Fruit Development","time":"Year 2","activity":"Fruit enlargement","fertilizer":"Potassium fertilizer","npk":"K 20 kg","water":"Irrigate weekly","notes":"Pest protection"},
+{"stage":"Maturity","time":"Year 3","activity":"Fruits ripen","fertilizer":"None","npk":"None","water":"Reduce irrigation","notes":"Check fruit color"},
+{"stage":"Harvest","time":"Year 3","activity":"Harvest ripe oranges","fertilizer":"None","npk":"None","water":"None","notes":"Handle carefully"}
+],
+
+"papaya":[
+{"stage":"Land Preparation","time":"Week 1","activity":"Prepare pits","fertilizer":"Apply 10 kg compost per pit","npk":"NPK 40:20:20","water":"Moist soil","notes":"Spacing 2x2 m"},
+{"stage":"Seed Sowing","time":"Week 2","activity":"Sow papaya seeds","fertilizer":"Organic manure","npk":"None","water":"Light irrigation","notes":"Healthy seedlings"},
+{"stage":"Transplanting","time":"Week 5","activity":"Transplant seedlings","fertilizer":"Compost","npk":"None","water":"Irrigate after transplant","notes":"Remove weak plants"},
+{"stage":"Vegetative Growth","time":"Month 2-4","activity":"Rapid leaf growth","fertilizer":"Nitrogen fertilizer","npk":"Urea 20 kg","water":"Irrigate every 3 days","notes":"Mulching recommended"},
+{"stage":"Flower Initiation","time":"Month 5","activity":"Flower buds appear","fertilizer":"Potassium fertilizer","npk":"K 20 kg","water":"Maintain moisture","notes":"Avoid drought"},
+{"stage":"Flowering","time":"Month 6","activity":"Flowers bloom","fertilizer":"Micronutrients","npk":"None","water":"Regular irrigation","notes":"Pollination required"},
+{"stage":"Fruit Set","time":"Month 6","activity":"Fruit formation","fertilizer":"Balanced fertilizer","npk":"NPK 30:20:20","water":"Irrigate weekly","notes":"Protect from pests"},
+{"stage":"Fruit Development","time":"Month 7","activity":"Fruit enlargement","fertilizer":"Potassium fertilizer","npk":"K 15 kg","water":"Regular irrigation","notes":"Healthy fruits"},
+{"stage":"Maturity","time":"Month 8","activity":"Fruits ripen","fertilizer":"None","npk":"None","water":"Reduce irrigation","notes":"Check color"},
+{"stage":"Harvest","time":"Month 9","activity":"Harvest ripe papaya","fertilizer":"None","npk":"None","water":"None","notes":"Handle carefully"}
+],
+
+"pomegranate":[
+{"stage":"Land Preparation","time":"Week 1","activity":"Prepare orchard pits","fertilizer":"Apply 15 kg FYM","npk":"NPK 50:30:30","water":"Moist soil","notes":"Spacing 5x5 m"},
+{"stage":"Planting","time":"Week 2","activity":"Plant saplings","fertilizer":"Organic manure","npk":"None","water":"Irrigate after planting","notes":"Firm soil"},
+{"stage":"Establishment","time":"Month 1-6","activity":"Plant growth","fertilizer":"Apply compost","npk":"None","water":"Weekly irrigation","notes":"Remove weeds"},
+{"stage":"Vegetative Growth","time":"Year 1-2","activity":"Branch growth","fertilizer":"Nitrogen fertilizer","npk":"Urea 25 kg","water":"Irrigate every 10 days","notes":"Pruning required"},
+{"stage":"Flower Initiation","time":"Year 2","activity":"Flower buds appear","fertilizer":"Potassium fertilizer","npk":"K 20 kg","water":"Light irrigation","notes":"Avoid drought"},
+{"stage":"Flowering","time":"Year 2","activity":"Red flowers bloom","fertilizer":"Micronutrients","npk":"None","water":"Maintain moisture","notes":"Pollination"},
+{"stage":"Fruit Set","time":"Year 2","activity":"Fruit formation","fertilizer":"Balanced fertilizer","npk":"NPK 30:20:20","water":"Regular irrigation","notes":"Protect from pests"},
+{"stage":"Fruit Development","time":"Year 2","activity":"Fruit enlargement","fertilizer":"Potassium fertilizer","npk":"K 20 kg","water":"Irrigate weekly","notes":"Healthy fruits"},
+{"stage":"Maturity","time":"Year 3","activity":"Fruits ripen","fertilizer":"None","npk":"None","water":"Reduce irrigation","notes":"Check color"},
+{"stage":"Harvest","time":"Year 3","activity":"Harvest ripe fruits","fertilizer":"None","npk":"None","water":"None","notes":"Handle carefully"}
+],
+
+"blackgram":[
+{"stage":"Land Preparation","time":"Week 1","activity":"Prepare seedbed","fertilizer":"Apply compost","npk":"NPK 20:40:20","water":"Moist soil","notes":"Well drained soil"},
+{"stage":"Seed Treatment","time":"Week 1","activity":"Treat seeds with Rhizobium","fertilizer":"None","npk":"None","water":"None","notes":"Improve nitrogen fixation"},
+{"stage":"Sowing","time":"Week 2","activity":"Sow seeds","fertilizer":"DAP basal","npk":"DAP 50 kg","water":"Light irrigation","notes":"Spacing 30x10 cm"},
+{"stage":"Germination","time":"Week 3","activity":"Seedling emergence","fertilizer":"None","npk":"None","water":"Minimal irrigation","notes":"Avoid waterlogging"},
+{"stage":"Vegetative Growth","time":"Week 4","activity":"Leaf growth","fertilizer":"None","npk":"None","water":"Irrigate weekly","notes":"Remove weeds"},
+{"stage":"Branching","time":"Week 5","activity":"Branch formation","fertilizer":"Micronutrients","npk":"None","water":"Light irrigation","notes":"Healthy plants"},
+{"stage":"Flowering","time":"Week 6","activity":"Yellow flowers appear","fertilizer":"Potassium fertilizer","npk":"K 10 kg","water":"Maintain soil moisture","notes":"Avoid drought"},
+{"stage":"Pod Formation","time":"Week 7","activity":"Pods develop","fertilizer":"None","npk":"None","water":"Irrigate every 5 days","notes":"Pest control"},
+{"stage":"Maturity","time":"Week 8","activity":"Pods dry","fertilizer":"None","npk":"None","water":"Reduce irrigation","notes":"Prepare harvest"},
+{"stage":"Harvest","time":"Week 9","activity":"Harvest mature pods","fertilizer":"None","npk":"None","water":"None","notes":"Dry seeds"}
+],
+"lentil":[
+{"stage":"Land Preparation","time":"Week 1","activity":"Prepare fine seedbed","fertilizer":"Apply 5 ton FYM","npk":"NPK 20:40:20","water":"Moist soil","notes":"Well drained loamy soil"},
+{"stage":"Seed Treatment","time":"Week 1","activity":"Treat seeds with Rhizobium","fertilizer":"Biofertilizer","npk":"None","water":"None","notes":"Improve nitrogen fixation"},
+{"stage":"Sowing","time":"Week 2","activity":"Sow seeds in rows","fertilizer":"Basal fertilizer","npk":"DAP 40 kg","water":"Light irrigation","notes":"Spacing 30x10 cm"},
+{"stage":"Germination","time":"Week 3","activity":"Seedling emergence","fertilizer":"None","npk":"None","water":"Minimal irrigation","notes":"Avoid waterlogging"},
+{"stage":"Vegetative Growth","time":"Week 4","activity":"Leaf growth","fertilizer":"None","npk":"None","water":"Irrigate weekly","notes":"Remove weeds"},
+{"stage":"Branching","time":"Week 5","activity":"Branch development","fertilizer":"Micronutrient spray","npk":"None","water":"Light irrigation","notes":"Healthy plants"},
+{"stage":"Flowering","time":"Week 6","activity":"Flower formation","fertilizer":"Potassium fertilizer","npk":"K 10 kg","water":"Maintain soil moisture","notes":"Avoid drought"},
+{"stage":"Pod Formation","time":"Week 7","activity":"Pods develop","fertilizer":"None","npk":"None","water":"Irrigate every 5 days","notes":"Pest monitoring"},
+{"stage":"Maturity","time":"Week 8","activity":"Pods dry","fertilizer":"None","npk":"None","water":"Reduce irrigation","notes":"Prepare harvest"},
+{"stage":"Harvest","time":"Week 9","activity":"Harvest mature plants","fertilizer":"None","npk":"None","water":"None","notes":"Dry seeds before storage"}
+],
+
+"pigeonpeas":[
+{"stage":"Land Preparation","time":"Week 1","activity":"Prepare field with deep ploughing","fertilizer":"Apply 5 ton FYM","npk":"NPK 20:50:20","water":"Moist soil","notes":"Well drained soil"},
+{"stage":"Seed Treatment","time":"Week 1","activity":"Treat seeds with Rhizobium","fertilizer":"Biofertilizer","npk":"None","water":"None","notes":"Improve nitrogen fixation"},
+{"stage":"Sowing","time":"Week 2","activity":"Sow seeds in rows","fertilizer":"Basal fertilizer","npk":"DAP 40 kg","water":"Light irrigation","notes":"Spacing 60x20 cm"},
+{"stage":"Germination","time":"Week 3","activity":"Seedling emergence","fertilizer":"None","npk":"None","water":"Minimal irrigation","notes":"Protect seedlings"},
+{"stage":"Vegetative Growth","time":"Week 4-8","activity":"Rapid plant growth","fertilizer":"Nitrogen fertilizer","npk":"Urea 20 kg","water":"Irrigate every 10 days","notes":"Weeding required"},
+{"stage":"Branching","time":"Week 9","activity":"Branch formation","fertilizer":"Micronutrient spray","npk":"None","water":"Maintain moisture","notes":"Healthy plants"},
+{"stage":"Flowering","time":"Week 10","activity":"Yellow flowers appear","fertilizer":"Potassium fertilizer","npk":"K 15 kg","water":"Light irrigation","notes":"Avoid drought"},
+{"stage":"Pod Formation","time":"Week 12","activity":"Pods develop","fertilizer":"None","npk":"None","water":"Irrigate weekly","notes":"Pest control"},
+{"stage":"Maturity","time":"Week 16","activity":"Pods dry","fertilizer":"None","npk":"None","water":"Reduce irrigation","notes":"Prepare harvest"},
+{"stage":"Harvest","time":"Week 18","activity":"Harvest mature pods","fertilizer":"None","npk":"None","water":"None","notes":"Dry seeds before storage"}
+],
+
+"kidneybeans":[
+{"stage":"Land Preparation","time":"Week 1","activity":"Prepare seedbed","fertilizer":"Apply compost","npk":"NPK 30:50:30","water":"Moist soil","notes":"Well drained loamy soil"},
+{"stage":"Seed Treatment","time":"Week 1","activity":"Treat seeds with fungicide","fertilizer":"Fungicide","npk":"None","water":"None","notes":"Disease prevention"},
+{"stage":"Sowing","time":"Week 2","activity":"Sow seeds in rows","fertilizer":"Basal fertilizer","npk":"DAP 50 kg","water":"Light irrigation","notes":"Spacing 30x15 cm"},
+{"stage":"Germination","time":"Week 3","activity":"Seedling emergence","fertilizer":"None","npk":"None","water":"Minimal irrigation","notes":"Avoid waterlogging"},
+{"stage":"Vegetative Growth","time":"Week 4","activity":"Leaf growth","fertilizer":"Nitrogen fertilizer","npk":"Urea 15 kg","water":"Irrigate weekly","notes":"Remove weeds"},
+{"stage":"Branching","time":"Week 5","activity":"Branch formation","fertilizer":"Micronutrients","npk":"None","water":"Light irrigation","notes":"Healthy plants"},
+{"stage":"Flowering","time":"Week 6","activity":"White flowers bloom","fertilizer":"Potassium fertilizer","npk":"K 10 kg","water":"Maintain soil moisture","notes":"Avoid drought"},
+{"stage":"Pod Formation","time":"Week 7","activity":"Pods develop","fertilizer":"None","npk":"None","water":"Irrigate every 5 days","notes":"Pest control"},
+{"stage":"Maturity","time":"Week 8","activity":"Pods dry","fertilizer":"None","npk":"None","water":"Reduce irrigation","notes":"Prepare harvest"},
+{"stage":"Harvest","time":"Week 9","activity":"Harvest mature pods","fertilizer":"None","npk":"None","water":"None","notes":"Dry beans before storage"}
+],
+
+"mothbeans":[
+{"stage":"Land Preparation","time":"Week 1","activity":"Prepare field with ploughing","fertilizer":"Apply compost","npk":"NPK 20:40:20","water":"Moist soil","notes":"Sandy soil suitable"},
+{"stage":"Seed Treatment","time":"Week 1","activity":"Treat seeds with Rhizobium","fertilizer":"Biofertilizer","npk":"None","water":"None","notes":"Improve nitrogen fixation"},
+{"stage":"Sowing","time":"Week 2","activity":"Broadcast or row sowing","fertilizer":"Basal fertilizer","npk":"DAP 40 kg","water":"Light irrigation","notes":"Spacing 30x10 cm"},
+{"stage":"Germination","time":"Week 3","activity":"Seedling emergence","fertilizer":"None","npk":"None","water":"Minimal irrigation","notes":"Avoid waterlogging"},
+{"stage":"Vegetative Growth","time":"Week 4","activity":"Leaf development","fertilizer":"None","npk":"None","water":"Irrigate weekly","notes":"Remove weeds"},
+{"stage":"Branching","time":"Week 5","activity":"Branch formation","fertilizer":"Micronutrient spray","npk":"None","water":"Light irrigation","notes":"Healthy plants"},
+{"stage":"Flowering","time":"Week 6","activity":"Yellow flowers appear","fertilizer":"Potassium fertilizer","npk":"K 10 kg","water":"Maintain moisture","notes":"Avoid drought"},
+{"stage":"Pod Formation","time":"Week 7","activity":"Pods develop","fertilizer":"None","npk":"None","water":"Irrigate every 5 days","notes":"Pest monitoring"},
+{"stage":"Maturity","time":"Week 8","activity":"Pods dry","fertilizer":"None","npk":"None","water":"Reduce irrigation","notes":"Prepare harvest"},
+{"stage":"Harvest","time":"Week 9","activity":"Harvest mature pods","fertilizer":"None","npk":"None","water":"None","notes":"Dry seeds before storage"}
+]
+}
