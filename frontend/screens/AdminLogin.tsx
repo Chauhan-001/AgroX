@@ -6,7 +6,9 @@ import {
   TouchableOpacity,
   Alert,
 } from "react-native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
+let url = "192.168.25.228";
 export default function AdminLogin({ navigation }) {
   const [adminId, setAdminId] = useState("");
   const [password, setPassword] = useState("");
@@ -18,7 +20,7 @@ export default function AdminLogin({ navigation }) {
     }
 
     try {
-         const response = await fetch("http://192.168.25.118:7000/api/admin/auth/login", {
+         const response = await fetch(`http://${url}:7000/api/admin/auth/login`, {
            method: "POST",
            headers: { "Content-Type": "application/json" },
            body: JSON.stringify({ id: adminId, password }),
@@ -31,6 +33,9 @@ export default function AdminLogin({ navigation }) {
          }
 
           const data = await response.json();
+          if (data.token) {
+            await AsyncStorage.setItem("AdminToken", data.token);
+          }
    
           navigation.replace("AdminHome");
    

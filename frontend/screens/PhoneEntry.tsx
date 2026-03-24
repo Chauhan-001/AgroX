@@ -9,6 +9,8 @@ import {
   Pressable,
 } from "react-native";
 
+let url="192.168.25.228" ;
+
 export default function PhoneScreen({ navigation }) {
   const [phone, setPhone] = useState("");
   const [menuVisible, setMenuVisible] = useState(false);
@@ -20,7 +22,7 @@ export default function PhoneScreen({ navigation }) {
     }
 
     try {
-      await fetch("http://192.168.25.118:7000/api/farmer/auth/send-otp", {
+      await fetch(`http://${url}:7000/api/farmer/auth/send-otp`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

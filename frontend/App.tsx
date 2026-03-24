@@ -18,6 +18,15 @@ import AdminSubsidyScreen from "./screens/Admin/AdminSubsidyScreen";
 import AdminMarketScreen from "./screens/Admin/AdminMarketScreen";
 import FarmerMarketDetails from "./screens/Admin/FarmerMarketDetails";
 
+//Models screens
+import cropsDetails from "./screens/cropRecommendationModelScreen/cropsDetails";
+import cropPredictionScreen from "./screens/cropRecommendationModelScreen/cropPredictionScreen";
+import selectCrop from "./screens/cropRecommendationModelScreen/selectCrop";
+import PredictionScreen from "./screens/Prediction/PredictionScreen";
+
+import SoilPrediction from "./screens/soil_type_prediction/index";
+import resultsoil from "./screens/soil_type_prediction/result";
+
 enableScreens();
 
 /* ⭐ TYPE SAFE STACK */
@@ -34,6 +43,17 @@ export type RootStackParamList = {
   AdminNews: undefined;
   AdminSubsidy: undefined;
   AdminMarket: undefined;
+  FarmerMarketDetails: undefined;
+
+  /* ⭐ MODEL SCREENS */
+  cropsDetails: undefined;
+  cropPredictionScreen: undefined;
+  selectCrop: undefined;
+
+  PredictionScreen: undefined;
+
+  resultSoil: undefined;
+  soilPrediction: undefined; 
 };
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -61,6 +81,17 @@ export default function App(): JSX.Element {
         <Stack.Screen name="AdminSubsidy" component={AdminSubsidyScreen} />
         <Stack.Screen name="AdminMarket" component={AdminMarketScreen} />
         <Stack.Screen name="FarmerMarketDetails" component={FarmerMarketDetails} />
+
+
+        {/* MODEL SCREENS */}
+        <Stack.Screen name="cropsDetails" component={cropsDetails} />
+        <Stack.Screen name="cropPredictionScreen" component={cropPredictionScreen} />
+        <Stack.Screen name="selectCrop" component={selectCrop} />
+
+        <Stack.Screen name="PredictionScreen" component={PredictionScreen} />
+
+        <Stack.Screen name="soilPrediction" component={SoilPrediction} />
+      <Stack.Screen name="resultSoil" component={resultsoil} />   
 
       </Stack.Navigator>
     </NavigationContainer>

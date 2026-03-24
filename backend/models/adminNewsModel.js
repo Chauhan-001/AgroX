@@ -4,7 +4,11 @@ import mongoose from "mongoose";
 const newsSchema = new mongoose.Schema({
   title: String,
   description: String,
-  image: String,
+  images: [
+      {
+        type: String,   // Cloudinary / S3 image URL
+      },
+    ],
   redirectLink: String,
 
   adType: {

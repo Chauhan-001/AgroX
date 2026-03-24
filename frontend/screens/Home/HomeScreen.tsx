@@ -47,8 +47,9 @@ export default function HomeScreen() {
       );
     }
 
-    if (activeTab === "Prediction") return <PredictionScreen />;
-    if (activeTab === "Subsidy") return <SubsidyScreen />;
+if (activeTab === "Prediction")
+  return <PredictionScreen navigation={navigation} />;    
+if (activeTab === "Subsidy") return <SubsidyScreen  />;
     if (activeTab === "Market") return <MarketScreen />;
     if (activeTab === "Profile") return <ProfileScreen />;
 

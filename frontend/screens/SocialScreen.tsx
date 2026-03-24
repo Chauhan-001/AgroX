@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import {
   View,
   Text,
@@ -6,393 +6,335 @@ import {
   Image,
   StyleSheet,
   TouchableOpacity,
-  Animated,
   Modal,
   TextInput,
-  ScrollView,
+  Dimensions,
+  Animated,
+  RefreshControl,
+  SafeAreaView,
+  StatusBar,
   Alert,
 } from "react-native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
-export default function SocialScreen({
-  posts = [],
-  scrollY,
-  headerHeight = 0,
-  onOpenProfile,
-}) {
+const { width } = Dimensions.get("window");
+const IMAGE_HEIGHT = 300;
 
-  const CURRENT_USER_ID = "user1";
-  const CURRENT_USER_NAME = "Farmer";
+const BASE_URL = "http://192.168.25.228:7000";
+const API_URL = `${BASE_URL}/api/farmer`;
 
+export default function SocialScreen() {
   const [feed, setFeed] = useState([]);
-  const [deletedIds, setDeletedIds] = useState([]);
+  const [refreshing, setRefreshing] = useState(false);
 
-  const [menuPost, setMenuPost] = useState(null);
   const [commentModal, setCommentModal] = useState(false);
   const [activePostId, setActivePostId] = useState(null);
-
+  const [comments, setComments] = useState([]);
   const [commentText, setCommentText] = useState("");
+  const [replyTo, setReplyTo] = useState(null);
   const [replyText, setReplyText] = useState("");
-  const [replyIndex, setReplyIndex] = useState(null);
 
-  useEffect(() => {
-    const safe = posts
-      .filter((p) => !deletedIds.includes(p.id))
-      .map((p) => ({
+  /* ================= FETCH POSTS ================= */
+  const fetchPosts = async () => {
+    try {
+      const token = await AsyncStorage.getItem("FarmerToken");
+
+      const res = await fetch(`${API_URL}/posts`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      const data = await res.json();
+
+      const formatted = data.map((p) => ({
         ...p,
-        likes: p.likes || 0,
-        likedUsers: p.likedUsers || [],
-        comments: (p.comments || []).map((c) => ({
-          ...c,
-          likes: c.likes || 0,
-          likedUsers: c.likedUsers || [],
-          replies: (c.replies || []).map((r) => ({
-            ...r,
-            likes: r.likes || 0,
-            likedUsers: r.likedUsers || [],
-          })),
-        })),
+        images: p.mediaUrl?.map((img) =>
+          img.startsWith("http") ? img : `${BASE_URL}/${img}`
+        ),
       }));
 
-    setFeed(safe);
-  }, [posts, deletedIds]);
-
-  const activePost = feed.find((p) => p.id === activePostId);
-
-  /* LIKE POST */
-  const toggleLikePost = (postId) => {
-    setFeed((prev) =>
-      prev.map((p) => {
-        if (p.id !== postId) return p;
-        const liked = p.likedUsers.includes(CURRENT_USER_ID);
-        return {
-          ...p,
-          likes: liked ? p.likes - 1 : p.likes + 1,
-          likedUsers: liked
-            ? p.likedUsers.filter((id) => id !== CURRENT_USER_ID)
-            : [...p.likedUsers, CURRENT_USER_ID],
-        };
-      })
-    );
+      setFeed(formatted);
+    } catch (err) {
+      console.log("FETCH ERROR:", err);
+    }
   };
 
-  /* DELETE POST */
-  const deletePost = () => {
-    Alert.alert("Delete Post", "Are you sure?", [
-      { text: "Cancel" },
-      {
-        text: "Delete",
-        onPress: () => {
-          setDeletedIds((prev) => [...prev, menuPost.id]);
-          setMenuPost(null);
-        },
-      },
-    ]);
+  useEffect(() => {
+    fetchPosts();
+  }, []);
+
+  const onRefresh = useCallback(async () => {
+    setRefreshing(true);
+    await fetchPosts();
+    setRefreshing(false);
+  }, []);
+
+  /* ================= LIKE POST ================= */
+  const toggleLikePost = async (postId) => {
+    try {
+      const token = await AsyncStorage.getItem("FarmerToken");
+
+      await fetch(`${API_URL}/${postId}/like`, {
+        method: "PUT",
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      fetchPosts(); // refresh from backend
+    } catch (err) {
+      console.log(err);
+    }
   };
 
-  /* OPEN COMMENTS */
+  /* ================= OPEN COMMENTS ================= */
   const openComments = (post) => {
-    setActivePostId(post.id);
+    setActivePostId(post._id);
+    setComments(post.comments || []);
     setCommentModal(true);
   };
 
-  /* ADD COMMENT */
-  const addComment = () => {
+  /* ================= ADD COMMENT ================= */
+  const addComment = async () => {
     if (!commentText.trim()) return;
 
-    setFeed((prev) =>
-      prev.map((p) =>
-        p.id === activePostId
-          ? {
-              ...p,
-              comments: [
-                ...p.comments,
-                {
-                  userName: CURRENT_USER_NAME,
-                  text: commentText,
-                  likes: 0,
-                  likedUsers: [],
-                  replies: [],
-                },
-              ],
-            }
-          : p
-      )
-    );
+    try {
+      const token = await AsyncStorage.getItem("FarmerToken");
 
-    setCommentText("");
+      const res = await fetch(`${API_URL}/${activePostId}/comment`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ text: commentText }),
+      });
+
+      const data = await res.json();
+
+      setComments([...comments, data]); // backend must return populated user
+      setCommentText("");
+    } catch (err) {
+      console.log(err);
+    }
   };
 
-  /* LIKE COMMENT */
-  const toggleLikeComment = (index) => {
-    setFeed((prev) =>
-      prev.map((p) => {
-        if (p.id !== activePostId) return p;
+  /* ================= LIKE COMMENT ================= */
+  const likeComment = async (commentId) => {
+    const token = await AsyncStorage.getItem("FarmerToken");
 
-        const c = p.comments[index];
-        const liked = c.likedUsers.includes(CURRENT_USER_ID);
-
-        const newComments = [...p.comments];
-        newComments[index] = {
-          ...c,
-          likes: liked ? c.likes - 1 : c.likes + 1,
-          likedUsers: liked
-            ? c.likedUsers.filter((id) => id !== CURRENT_USER_ID)
-            : [...c.likedUsers, CURRENT_USER_ID],
-        };
-
-        return { ...p, comments: newComments };
-      })
+    await fetch(
+      `${API_URL}/${activePostId}/comment/${commentId}/like`,
+      {
+        method: "PUT",
+        headers: { Authorization: `Bearer ${token}` },
+      }
     );
+
+    fetchPosts();
   };
 
-  /* ADD REPLY */
-  const addReply = (cIndex) => {
+  /* ================= REPLY ================= */
+  const replyComment = async () => {
     if (!replyText.trim()) return;
 
-    setFeed((prev) =>
-      prev.map((p) => {
-        if (p.id !== activePostId) return p;
+    const token = await AsyncStorage.getItem("FarmerToken");
 
-        const newComments = [...p.comments];
-        newComments[cIndex].replies.push({
-          userName: CURRENT_USER_NAME,
-          text: replyText,
-          likes: 0,
-          likedUsers: [],
-        });
-
-        return { ...p, comments: newComments };
-      })
+    await fetch(
+      `${API_URL}/${activePostId}/comment/${replyTo._id}/reply`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ text: replyText }),
+      }
     );
 
     setReplyText("");
-    setReplyIndex(null);
+    setReplyTo(null);
+    fetchPosts();
   };
 
-  /* LIKE REPLY */
-  const toggleLikeReply = (cIndex, rIndex) => {
-    setFeed((prev) =>
-      prev.map((p) => {
-        if (p.id !== activePostId) return p;
-
-        const newComments = [...p.comments];
-        const reply = newComments[cIndex].replies[rIndex];
-        const liked = reply.likedUsers.includes(CURRENT_USER_ID);
-
-        newComments[cIndex].replies[rIndex] = {
-          ...reply,
-          likes: liked ? reply.likes - 1 : reply.likes + 1,
-          likedUsers: liked
-            ? reply.likedUsers.filter((id) => id !== CURRENT_USER_ID)
-            : [...reply.likedUsers, CURRENT_USER_ID],
-        };
-
-        return { ...p, comments: newComments };
-      })
-    );
-  };
-
-  const renderItem = ({ item }) => {
-    const liked = item.likedUsers.includes(CURRENT_USER_ID);
-
+  /* ================= IMAGE FIX ================= */
+  const ImageCarousel = ({ images }) => {
     return (
-      <View style={styles.card}>
-        <View style={styles.userRow}>
-          <TouchableOpacity
-            style={{ flexDirection: "row", alignItems: "center" }}
-            onPress={() => onOpenProfile(item.user)}
-          >
-            <Image source={{ uri: item.user.avatar }} style={styles.avatar} />
-            <View>
-              <Text style={styles.name}>{item.user.name}</Text>
-              <Text style={styles.location}>📍 {item.location}</Text>
-            </View>
-          </TouchableOpacity>
-
-          <TouchableOpacity onPress={() => setMenuPost(item)}>
-            <Text style={styles.menu}>⋮</Text>
-          </TouchableOpacity>
-        </View>
-
-        <Image source={{ uri: item.image }} style={styles.postImage} />
-
-        <View style={styles.actionRow}>
-          <TouchableOpacity onPress={() => toggleLikePost(item.id)}>
-            <Text style={[styles.action, { color: liked ? "red" : "#333" }]}>
-              ❤️ {item.likes}
-            </Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity onPress={() => openComments(item)}>
-            <Text style={styles.action}>💬 {item.comments.length}</Text>
-          </TouchableOpacity>
-        </View>
-
-        <Text style={styles.caption}>{item.caption}</Text>
-        <Text style={styles.crop}>🌾 {item.crop}</Text>
+      <View style={{ width: "100%", height: IMAGE_HEIGHT }}>
+        <FlatList
+          data={images}
+          horizontal
+          pagingEnabled
+          keyExtractor={(_, i) => i.toString()}
+          renderItem={({ item }) => (
+            <Image
+              source={{ uri: item }}
+              style={{
+                width: width - 50,
+                height: IMAGE_HEIGHT,
+                borderRadius: 10,
+              }}
+              resizeMode="cover"
+            />
+          )}
+        />
       </View>
     );
   };
 
+  /* ================= POST ================= */
+  const renderItem = ({ item }) => (
+    <View style={styles.card}>
+      <Text style={styles.username}>
+        {item.postedBy?.name || "User"}
+      </Text>
+
+      {item.images?.length > 0 && (
+        <ImageCarousel images={item.images} />
+      )}
+
+      <View style={styles.row}>
+        <TouchableOpacity onPress={() => toggleLikePost(item._id)}>
+          <Text>❤️ {item.likes?.length || 0}</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity onPress={() => openComments(item)}>
+          <Text>💬 {item.comments?.length || 0}</Text>
+        </TouchableOpacity>
+      </View>
+
+      <Text>{item.caption}</Text>
+    </View>
+  );
+
   return (
-    <>
-      <Animated.FlatList
+    <SafeAreaView style={{ flex: 1 }}>
+      <StatusBar />
+
+      <FlatList
         data={feed}
-        keyExtractor={(i) => i.id.toString()}
         renderItem={renderItem}
-        contentContainerStyle={{
-          paddingTop: headerHeight,
-          paddingBottom: 120,
-        }}
+        keyExtractor={(item) => item._id}
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }
       />
 
-      {/* COMMENT MODAL */}
-      <Modal visible={commentModal} animationType="slide">
-        <View style={{ flex: 1, padding: 15 }}>
-          <ScrollView>
-            {activePost?.comments.map((c, i) => {
-              const liked = c.likedUsers.includes(CURRENT_USER_ID);
-              return (
-                <View key={i} style={styles.commentBox}>
-                  <View style={styles.commentRow}>
-                    <Text>
-                      <Text style={{ fontWeight: "700" }}>
-                        {c.userName}{" "}
-                      </Text>
-                      {c.text}
-                    </Text>
-                    <TouchableOpacity onPress={() => toggleLikeComment(i)}>
-                      <Text style={{ color: liked ? "red" : "#FF7A00" }}>
-                        ❤️ {c.likes}
-                      </Text>
-                    </TouchableOpacity>
-                  </View>
+      {/* ================= COMMENTS MODAL ================= */}
+      <Modal visible={commentModal}>
+        <SafeAreaView style={{ flex: 1 }}>
 
-                  {c.replies.map((r, ri) => {
-                    const rLiked = r.likedUsers.includes(CURRENT_USER_ID);
-                    return (
-                      <View key={ri} style={styles.replyRow}>
-                        <Text>
-                          <Text style={{ fontWeight: "700" }}>
-                            {r.userName}{" "}
-                          </Text>
-                          {r.text}
-                        </Text>
-                        <TouchableOpacity
-                          onPress={() => toggleLikeReply(i, ri)}
-                        >
-                          <Text style={{ color: rLiked ? "red" : "#FF7A00" }}>
-                            ❤️ {r.likes}
-                          </Text>
-                        </TouchableOpacity>
-                      </View>
-                    );
-                  })}
+          {/* HEADER WITH CLOSE BUTTON */}
+          <View style={styles.modalHeader}>
+            <Text style={{ fontSize: 18 }}>Comments</Text>
 
-                  <TouchableOpacity onPress={() => setReplyIndex(i)}>
-                    <Text style={styles.replyBtn}>Reply</Text>
+            <TouchableOpacity
+              onPress={() => setCommentModal(false)}
+              style={styles.closeBtn}
+            >
+              <Text style={{ color: "#fff" }}>✕</Text>
+            </TouchableOpacity>
+          </View>
+
+          {/* COMMENTS LIST */}
+          <FlatList
+            data={comments}
+            keyExtractor={(item) => item._id}
+            renderItem={({ item }) => (
+              <View style={styles.comment}>
+                <Text style={styles.bold}>
+                  {item.user?.name || item.postedBy?.name || "User"}
+                </Text>
+
+                <Text>{item.text}</Text>
+
+                <View style={styles.row}>
+                  <TouchableOpacity onPress={() => likeComment(item._id)}>
+                    <Text>❤️ {item.likes?.length || 0}</Text>
                   </TouchableOpacity>
 
-                  {replyIndex === i && (
-                    <View style={styles.inputRow}>
-                      <TextInput
-                        value={replyText}
-                        onChangeText={setReplyText}
-                        placeholder="Reply..."
-                        style={styles.input}
-                      />
-                      <TouchableOpacity onPress={() => addReply(i)}>
-                        <Text style={styles.send}>Post</Text>
-                      </TouchableOpacity>
-                    </View>
-                  )}
+                  <TouchableOpacity onPress={() => setReplyTo(item)}>
+                    <Text>Reply</Text>
+                  </TouchableOpacity>
                 </View>
-              );
-            })}
-          </ScrollView>
 
+                {/* REPLIES */}
+                {item.replies?.map((r) => (
+                  <View key={r._id} style={{ marginLeft: 20 }}>
+                    <Text style={styles.bold}>
+                      {r.user?.name || "User"}
+                    </Text>
+                    <Text>{r.text}</Text>
+                  </View>
+                ))}
+              </View>
+            )}
+          />
+
+          {/* INPUT */}
           <View style={styles.inputRow}>
             <TextInput
-              value={commentText}
-              onChangeText={setCommentText}
-              placeholder="Write comment..."
               style={styles.input}
+              placeholder={
+                replyTo ? "Reply..." : "Add comment..."
+              }
+              value={replyTo ? replyText : commentText}
+              onChangeText={replyTo ? setReplyText : setCommentText}
             />
-            <TouchableOpacity onPress={addComment}>
-              <Text style={styles.send}>Send</Text>
-            </TouchableOpacity>
-          </View>
-
-          <TouchableOpacity
-            style={styles.close}
-            onPress={() => setCommentModal(false)}
-          >
-            <Text style={{ color: "#fff" }}>Close</Text>
-          </TouchableOpacity>
-        </View>
-      </Modal>
-
-      {/* MENU */}
-      <Modal visible={!!menuPost} transparent animationType="fade">
-        <TouchableOpacity
-          style={styles.menuOverlay}
-          activeOpacity={1}
-          onPress={() => setMenuPost(null)}
-        >
-          <View style={styles.menuBox}>
-            {menuPost?.user?.id === CURRENT_USER_ID && (
-              <TouchableOpacity style={styles.menuItemRow} onPress={deletePost}>
-                <Text style={styles.deleteText}>🗑 Delete Post</Text>
-              </TouchableOpacity>
-            )}
 
             <TouchableOpacity
-              style={styles.menuItemRow}
-              onPress={() => {
-                Alert.alert("Reported");
-                setMenuPost(null);
-              }}
+              onPress={replyTo ? replyComment : addComment}
             >
-              <Text style={styles.menuText}>🚩 Report</Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              style={styles.menuItemRow}
-              onPress={() => setMenuPost(null)}
-            >
-              <Text style={styles.cancelText}>Cancel</Text>
+              <Text style={{ color: "blue" }}>Send</Text>
             </TouchableOpacity>
           </View>
-        </TouchableOpacity>
+        </SafeAreaView>
       </Modal>
-    </>
+    </SafeAreaView>
   );
 }
 
+/* ================= STYLES ================= */
 const styles = StyleSheet.create({
-  card:{backgroundColor:"#fff",margin:10,borderRadius:14,elevation:3,overflow:"hidden"},
-  userRow:{flexDirection:"row",justifyContent:"space-between",alignItems:"center",padding:12},
-  avatar:{width:40,height:40,borderRadius:20,marginRight:10},
-  name:{fontWeight:"700"},
-  location:{fontSize:12,color:"#777"},
-  menu:{fontSize:22},
-  postImage:{width:"100%",height:250},
-  actionRow:{flexDirection:"row",padding:12},
-  action:{marginRight:25,fontWeight:"600"},
-  caption:{paddingHorizontal:12},
-  crop:{paddingHorizontal:12,paddingBottom:12,color:"#777"},
-  commentBox:{paddingVertical:8,borderBottomWidth:1,borderColor:"#eee"},
-  commentRow:{flexDirection:"row",justifyContent:"space-between"},
-  replyRow:{flexDirection:"row",justifyContent:"space-between",marginLeft:20},
-  replyBtn:{color:"#FF7A00",marginTop:4},
-  inputRow:{flexDirection:"row",alignItems:"center",marginTop:10},
-  input:{flex:1,borderWidth:1,borderColor:"#ddd",borderRadius:10,padding:10,marginRight:10},
-  send:{color:"#FF7A00",fontWeight:"700"},
-  close:{marginTop:15,backgroundColor:"#FF7A00",padding:12,borderRadius:10,alignItems:"center"},
-  menuOverlay:{flex:1,backgroundColor:"rgba(0,0,0,0.3)",justifyContent:"flex-end"},
-  menuBox:{backgroundColor:"#fff",padding:20,borderTopLeftRadius:20,borderTopRightRadius:20},
-  menuItemRow:{paddingVertical:14},
-  menuText:{fontSize:16},
-  deleteText:{fontSize:16,color:"red",fontWeight:"700"},
-  cancelText:{fontSize:16,color:"red",fontWeight:"700"},
+  card: {
+    margin: 15,
+    backgroundColor: "#fff",
+    padding: 10,
+    borderRadius: 10,
+  },
+  username: {
+    fontWeight: "bold",
+    marginBottom: 10,
+  },
+  row: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginVertical: 10,
+  },
+  comment: {
+    padding: 10,
+    borderBottomWidth: 1,
+  },
+  bold: {
+    fontWeight: "bold",
+  },
+  inputRow: {
+    flexDirection: "row",
+    padding: 10,
+  },
+  input: {
+    flex: 1,
+    borderWidth: 1,
+    marginRight: 10,
+    padding: 8,
+    borderRadius: 10,
+  },
+  modalHeader: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    padding: 15,
+    alignItems: "center",
+  },
+  closeBtn: {
+    backgroundColor: "red",
+    padding: 8,
+    borderRadius: 20,
+  },
 });

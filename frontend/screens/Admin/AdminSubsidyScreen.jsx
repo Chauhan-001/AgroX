@@ -14,33 +14,17 @@ import {
   Linking,
   StatusBar,
   ScrollView,
+  ActivityIndicator,
 } from "react-native";
 import { launchImageLibrary } from "react-native-image-picker";
-import { useIsFocused } from "@react-navigation/native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const { width } = Dimensions.get("window");
 
-let SUBSIDY_SESSION = [];
-
-const STATES = [
-  "Madhya Pradesh",
-  "Uttar Pradesh",
-  "Rajasthan",
-  "Gujarat",
-  "Punjab",
-  "Haryana",
-  "Bihar",
-  "Maharashtra",
-  "Chhattisgarh",
-  "Jharkhand",
-  "Odisha",
-  "West Bengal",
-];
+const API_URL = "http://192.168.25.228:7000/api/admin/subsidies";
+const BASE_URL = "http://192.168.29.97:7000";
 
 export default function AdminSubsidyScreen() {
-
-  const isFocused = useIsFocused();
-
   const [posts, setPosts] = useState([]);
 
   const [title, setTitle] = useState("");
@@ -49,60 +33,157 @@ export default function AdminSubsidyScreen() {
   const [stateName, setStateName] = useState("");
   const [lastDate, setLastDate] = useState("");
   const [link, setLink] = useState("");
-  const [image, setImage] = useState("");
+  const [images, setImages] = useState([]);
 
   const [editingId, setEditingId] = useState(null);
   const [showModal, setShowModal] = useState(false);
-  const [stateModal, setStateModal] = useState(false);
 
-  useEffect(() => {
-    if (isFocused) setPosts([...SUBSIDY_SESSION]);
-  }, [isFocused]);
+  const [loading, setLoading] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
 
-  const pickImage = async () => {
+  /* ================= FETCH ================= */
+  const fetchData = async () => {
     try {
-      const res = await launchImageLibrary({ mediaType: "photo", quality: 0.7 });
-      if (!res.didCancel && res.assets?.length > 0) {
-        setImage(res.assets[0].uri);
-      }
-    } catch (e) {
-      Alert.alert("Image error");
+      const res = await fetch(API_URL);
+      const data = await res.json();
+      setPosts(data.subsidies || data);
+    } catch (err) {
+      console.log(err);
     }
   };
 
-  const openLink = async (url) => {
-    if (!url) return;
-    let full = url.startsWith("http") ? url : "https://" + url;
-    Linking.openURL(full);
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  /* ================= REFRESH ================= */
+  const onRefresh = async () => {
+    setRefreshing(true);
+    await fetchData();
+    setRefreshing(false);
   };
 
-  const savePost = () => {
-
-    if (!title.trim() || !description.trim()) {
-      Alert.alert("Title & Description required");
+  /* ================= IMAGE PICK ================= */
+  const pickImage = async () => {
+    if (images.length >= 4) {
+      Alert.alert("Max 4 images allowed");
       return;
     }
 
-    if (editingId !== null) {
-      SUBSIDY_SESSION = SUBSIDY_SESSION.map(p =>
-        p.id === editingId
-          ? { ...p, title, description, schemeType, stateName, lastDate, link, image }
-          : p
-      );
-    } else {
-      SUBSIDY_SESSION.unshift({
-        id: Date.now().toString(),
-        title,
-        description,
-        schemeType,
-        stateName,
-        lastDate,
-        link,
-        image,
+    const res = await launchImageLibrary({
+      mediaType: "photo",
+      selectionLimit: 0,
+      quality: 0.7,
+    });
+
+    if (!res.didCancel) {
+      const newImgs = res.assets || [];
+
+      if (images.length + newImgs.length > 4) {
+        Alert.alert("Only 4 images allowed");
+        return;
+      }
+
+      setImages([...images, ...newImgs]);
+    }
+  };
+
+  /* ================= LINK ================= */
+  const openLink = async (url) => {
+    if (!url) return;
+    const full = url.startsWith("http") ? url : "https://" + url;
+    Linking.openURL(full);
+  };
+
+  /* ================= FORM DATA ================= */
+  const createFormData = () => {
+    const formData = new FormData();
+
+    formData.append("title", title);
+    formData.append("description", description);
+    formData.append("schemeType", schemeType);
+    formData.append("state", stateName);
+    formData.append("lastDate", lastDate);
+    formData.append("link", link);
+
+    images.forEach((img, index) => {
+      formData.append("images", {
+        uri: img.uri || img,
+        type: img.type || "image/jpeg",
+        name: img.fileName || `image_${index}.jpg`,
       });
+    });
+
+    return formData;
+  };
+
+  /* ================= SAVE ================= */
+  const savePost = async () => {
+    if (!title || !description) {
+      Alert.alert("Fill required fields");
+      return;
     }
 
-    setPosts([...SUBSIDY_SESSION]);
+    setLoading(true);
+
+    try {
+      const formData = createFormData();
+
+      let res;
+
+      if (editingId) {
+        res = await fetch(`${API_URL}/${editingId}`, {
+          method: "PUT",
+          headers: {
+            authorization: `Bearer ${await AsyncStorage.getItem("AdminToken")}`,
+          },
+          body: formData,
+        });
+      } else {
+        res = await fetch(API_URL, {
+          method: "POST",
+          headers: {
+            authorization: `Bearer ${await AsyncStorage.getItem("AdminToken")}`,
+          },
+          body: formData,
+        });
+      }
+
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.message);
+
+      fetchData();
+      resetForm();
+    } catch (err) {
+      Alert.alert("Error", err.message);
+    }
+
+    setLoading(false);
+  };
+
+  /* ================= DELETE ================= */
+  const deletePost = (id) => {
+    Alert.alert("Delete", "Delete this subsidy?", [
+      { text: "Cancel" },
+      {
+        text: "Delete",
+        onPress: async () => {
+          await fetch(`${API_URL}/${id}`, {
+            method: "DELETE",
+            headers: {
+              authorization: `Bearer ${await AsyncStorage.getItem("AdminToken")}`,
+            },
+          });
+
+          fetchData();
+        },
+      },
+    ]);
+  };
+
+  /* ================= RESET ================= */
+  const resetForm = () => {
+    if (loading) return; // prevent close while saving
 
     setTitle("");
     setDescription("");
@@ -110,41 +191,51 @@ export default function AdminSubsidyScreen() {
     setStateName("");
     setLastDate("");
     setLink("");
-    setImage("");
+    setImages([]);
     setEditingId(null);
     setShowModal(false);
   };
 
+  /* ================= EDIT ================= */
   const editPost = (item) => {
     setTitle(item.title || "");
     setDescription(item.description || "");
     setSchemeType(item.schemeType || "");
-    setStateName(item.stateName || "");
+    setStateName(item.state || "");
     setLastDate(item.lastDate || "");
     setLink(item.link || "");
-    setImage(item.image || "");
-    setEditingId(item.id);
+
+    const imgs =
+      item.images?.map((img) =>
+        img.startsWith("http") ? img : `${BASE_URL}/${img}`
+      ) || [];
+
+    setImages(imgs);
+    setEditingId(item._id);
     setShowModal(true);
   };
 
-  const deletePost = (id) => {
-    Alert.alert("Delete Subsidy", "Are you sure?", [
-      { text: "Cancel" },
-      {
-        text: "Delete",
-        onPress: () => {
-          SUBSIDY_SESSION = SUBSIDY_SESSION.filter(p => p.id !== id);
-          setPosts([...SUBSIDY_SESSION]);
-        },
-      },
-    ]);
-  };
-
+  /* ================= UI ================= */
   const renderItem = ({ item }) => (
     <View style={styles.card}>
-
-      {!!item.image && (
-        <Image source={{ uri: item.image }} style={styles.image} />
+      {item.images?.length > 0 ? (
+        <ScrollView horizontal>
+          {item.images.map((img, i) => (
+            <Image
+              key={i}
+              source={{
+                uri: img.startsWith("http")
+                  ? img
+                  : `${BASE_URL}/${img}`,
+              }}
+              style={styles.image}
+            />
+          ))}
+        </ScrollView>
+      ) : (
+        <View style={styles.placeholder}>
+          <Text style={{ color: "#777" }}>No Image Available</Text>
+        </View>
       )}
 
       <View style={{ padding: 14 }}>
@@ -152,7 +243,7 @@ export default function AdminSubsidyScreen() {
         <Text style={styles.desc}>{item.description}</Text>
 
         {!!item.schemeType && <Text style={styles.meta}>🏷 {item.schemeType}</Text>}
-        {!!item.stateName && <Text style={styles.meta}>📍 {item.stateName}</Text>}
+        {!!item.state && <Text style={styles.meta}>📍 {item.state}</Text>}
         {!!item.lastDate && <Text style={styles.meta}>⏳ {item.lastDate}</Text>}
 
         {!!item.link && (
@@ -162,203 +253,167 @@ export default function AdminSubsidyScreen() {
         )}
       </View>
 
-      <View style={styles.actionRow}>
-        <TouchableOpacity style={styles.editBtn} onPress={() => editPost(item)}>
-          <Text style={styles.actionText}>EDIT</Text>
+      <View style={styles.row}>
+        <TouchableOpacity onPress={() => editPost(item)}>
+          <Text style={styles.edit}>Edit</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.deleteBtn} onPress={() => deletePost(item.id)}>
-          <Text style={styles.actionText}>DEL</Text>
+        <TouchableOpacity onPress={() => deletePost(item._id)}>
+          <Text style={styles.delete}>Delete</Text>
         </TouchableOpacity>
       </View>
-
     </View>
   );
 
   return (
     <SafeAreaView style={styles.container}>
-
       <StatusBar backgroundColor="#FF7A00" barStyle="light-content" />
 
+      {/* HEADER */}
       <View style={styles.header}>
         <Text style={styles.headerTitle}>🏛 Govt Subsidy</Text>
-        <Text style={styles.headerSub}>Manage farmer subsidy schemes</Text>
+        <Text style={styles.headerSub}>Manage schemes</Text>
       </View>
 
       <FlatList
         data={posts}
-        keyExtractor={(i) => i.id}
+        keyExtractor={(i) => i._id}
         renderItem={renderItem}
+        refreshing={refreshing}
+        onRefresh={onRefresh}
         contentContainerStyle={{ padding: 16, paddingBottom: 120 }}
-        ListEmptyComponent={
-          <Text style={{ textAlign: "center", marginTop: 60 }}>
-            No subsidy added
-          </Text>
-        }
       />
 
+      {/* FAB */}
       <TouchableOpacity style={styles.fab} onPress={() => setShowModal(true)}>
         <Text style={{ color: "#fff", fontSize: 30 }}>＋</Text>
       </TouchableOpacity>
 
-      {/* FORM MODAL */}
+      {/* MODAL */}
       <Modal visible={showModal} animationType="slide">
-        <SafeAreaView style={styles.modal}>
-
-          <ScrollView>
+        <SafeAreaView style={{ flex: 1 }}>
+          <View style={styles.modalHeader}>
+            <TouchableOpacity disabled={loading} onPress={resetForm}>
+              <Text style={{ color: loading ? "#ccc" : "#000" }}>Cancel</Text>
+            </TouchableOpacity>
 
             <Text style={styles.modalTitle}>
-              {editingId ? "Edit Subsidy" : "Create Subsidy"}
+              {editingId ? "Edit" : "Create"}
             </Text>
 
-            <TextInput placeholder="Title" value={title} onChangeText={setTitle} style={styles.input}/>
-            <TextInput placeholder="Description" value={description} onChangeText={setDescription} multiline style={styles.textArea}/>
-            <TextInput placeholder="Scheme Type" value={schemeType} onChangeText={setSchemeType} style={styles.input}/>
-
-            <TouchableOpacity style={styles.input} onPress={() => setStateModal(true)}>
-              <Text>{stateName || "Select State"}</Text>
+            <TouchableOpacity disabled={loading} onPress={savePost}>
+              {loading ? (
+                <ActivityIndicator color="#FF7A00" />
+              ) : (
+                <Text style={{ color: "#FF7A00" }}>Save</Text>
+              )}
             </TouchableOpacity>
+          </View>
 
-            <TextInput placeholder="Last Date" value={lastDate} onChangeText={setLastDate} style={styles.input}/>
-            <TextInput placeholder="Apply Link" value={link} onChangeText={setLink} style={styles.input}/>
+          <ScrollView style={{ padding: 16 }}>
+            <TextInput placeholder="Title" placeholderTextColor="#888" value={title} onChangeText={setTitle} style={styles.input}/>
+            <TextInput placeholder="Description" placeholderTextColor="#888" value={description} onChangeText={setDescription} style={styles.textArea}/>
+            <TextInput placeholder="Scheme Type" placeholderTextColor="#888" value={schemeType} onChangeText={setSchemeType} style={styles.input}/>
+            <TextInput placeholder="State" placeholderTextColor="#888" value={stateName} onChangeText={setStateName} style={styles.input}/>
+            <TextInput placeholder="Last Date" placeholderTextColor="#888" value={lastDate} onChangeText={setLastDate} style={styles.input}/>
+            <TextInput placeholder="Link" placeholderTextColor="#888" value={link} onChangeText={setLink} style={styles.input}/>
 
             <TouchableOpacity style={styles.imagePicker} onPress={pickImage}>
-              {image
-                ? <Image source={{ uri: image }} style={{ width:"100%", height:"100%", borderRadius:12 }}/>
-                : <Text>Select Image</Text>
-              }
+              {images.length > 0 ? (
+                <ScrollView horizontal>
+                  {images.map((img, i) => (
+                    <Image key={i} source={{ uri: img.uri || img }} style={styles.thumb}/>
+                  ))}
+                </ScrollView>
+              ) : (
+                <Text style={{ color: "#555" }}>Select Images (Max 4)</Text>
+              )}
             </TouchableOpacity>
-
-            <TouchableOpacity style={styles.publish} onPress={savePost}>
-              <Text style={{ color:"#fff", fontWeight:"700" }}>SAVE</Text>
-            </TouchableOpacity>
-
           </ScrollView>
-
         </SafeAreaView>
       </Modal>
-
-      {/* STATE LIST */}
-      <Modal visible={stateModal} animationType="slide">
-        <SafeAreaView style={{ flex:1, backgroundColor:"#fff" }}>
-
-          <Text style={styles.stateTitle}>Select State</Text>
-
-          <FlatList
-            data={STATES}
-            keyExtractor={(i) => i}
-            renderItem={({ item }) => (
-              <TouchableOpacity
-                style={styles.stateItem}
-                onPress={() => {
-                  setStateName(item);
-                  setStateModal(false);
-                }}
-              >
-                <Text style={{ fontSize:16 }}>{item}</Text>
-              </TouchableOpacity>
-            )}
-          />
-
-        </SafeAreaView>
-      </Modal>
-
     </SafeAreaView>
   );
 }
 
+/* STYLES */
 const styles = StyleSheet.create({
   container:{ flex:1, backgroundColor:"#F4F6FA" },
 
   header:{
     backgroundColor:"#FF7A00",
     paddingTop:55,
-    paddingBottom:28,
+    paddingBottom:25,
     paddingHorizontal:18,
-    borderBottomLeftRadius:28,
-    borderBottomRightRadius:28,
+    borderBottomLeftRadius:25,
+    borderBottomRightRadius:25,
   },
 
   headerTitle:{ fontSize:24, fontWeight:"800", color:"#fff" },
-  headerSub:{ color:"#FFE7D1", marginTop:4 },
+  headerSub:{ color:"#FFE7D1" },
 
-  card:{
-    backgroundColor:"#fff",
-    borderRadius:18,
-    marginBottom:16,
-    elevation:4,
-    borderWidth:1,
-    borderColor:"#e0e0e0",
-    overflow:"hidden"
+  card:{ backgroundColor:"#fff", borderRadius:16, marginBottom:15 },
+
+  image:{ width: width * 0.7, height:200, marginRight:10 },
+
+  placeholder:{
+    height:200,
+    justifyContent:"center",
+    alignItems:"center",
+    backgroundColor:"#eee",
   },
 
-  image:{ width:"100%", height:width*0.55 },
-
   title:{ fontSize:16, fontWeight:"700" },
-  desc:{ fontSize:13, color:"#555", marginTop:3 },
-  meta:{ fontSize:12, color:"#444", marginTop:4 },
-  link:{ fontSize:14, color:"#1976D2", marginTop:8, fontWeight:"700" },
+  desc:{ color:"#555" },
+  meta:{ fontSize:12, color:"#777" },
+  link:{ color:"#1976D2", marginTop:6 },
 
-  actionRow:{ flexDirection:"row", justifyContent:"flex-end", padding:10 },
-
-  editBtn:{ backgroundColor:"#2196F3", paddingHorizontal:12, paddingVertical:5, borderRadius:20, marginRight:8 },
-  deleteBtn:{ backgroundColor:"#E53935", paddingHorizontal:12, paddingVertical:5, borderRadius:20 },
-
-  actionText:{ color:"#fff", fontSize:12 },
+  row:{ flexDirection:"row", justifyContent:"space-between", padding:10 },
+  edit:{ color:"blue" },
+  delete:{ color:"red" },
 
   fab:{
     position:"absolute",
     bottom:30,
-    right:24,
-    width:65,
-    height:65,
-    borderRadius:32,
+    right:20,
+    width:60,
+    height:60,
+    borderRadius:30,
     backgroundColor:"#FF7A00",
     justifyContent:"center",
     alignItems:"center",
   },
 
-  modal:{ flex:1, padding:20 },
+  modalHeader:{
+    flexDirection:"row",
+    justifyContent:"space-between",
+    padding:15,
+  },
 
-  modalTitle:{ fontSize:22, fontWeight:"800", marginBottom:15 },
+  modalTitle:{ fontSize:18, fontWeight:"700" },
 
-  input:{ backgroundColor:"#F1F3F7", padding:14, borderRadius:12, marginBottom:10 },
+  input:{
+    backgroundColor:"#F1F3F7",
+    padding:14,
+    borderRadius:10,
+    marginBottom:10,
+  },
 
   textArea:{
     backgroundColor:"#F1F3F7",
     padding:14,
-    borderRadius:12,
-    height:120,
+    borderRadius:10,
+    height:100,
     marginBottom:10,
-    textAlignVertical:"top"
   },
 
   imagePicker:{
-    height:160,
-    backgroundColor:"#F1F3F7",
-    borderRadius:12,
+    height:120,
+    backgroundColor:"#eee",
     justifyContent:"center",
     alignItems:"center",
-    marginTop:5
+    borderRadius:10,
   },
 
-  publish:{
-    backgroundColor:"#FF7A00",
-    padding:16,
-    borderRadius:14,
-    alignItems:"center",
-    marginTop:20
-  },
-
-  stateTitle:{
-    fontSize:22,
-    fontWeight:"800",
-    padding:20
-  },
-
-  stateItem:{
-    padding:18,
-    borderBottomWidth:1,
-    borderColor:"#eee"
-  }
+  thumb:{ width:100, height:100, marginRight:10 },
 });

@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   Alert,
 } from "react-native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function OTPScreen({ route, navigation }) {
   const { phone } = route.params;
@@ -15,7 +16,7 @@ export default function OTPScreen({ route, navigation }) {
     if (otp.length < 4) return;
 
     try {
-      const response = await fetch("http://192.168.25.118:7000/api/farmer/auth/verify-otp", {
+      const response = await fetch("http://192.168.25.68:7000/api/farmer/auth/verify-otp", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ phone, otp }),
@@ -26,9 +27,12 @@ export default function OTPScreen({ route, navigation }) {
       if (!response.ok) {
         Alert.alert("Invalid OTP");
         return;
-
+ 
 
       }
+      console.log("Received token:", data.token); 
+      await AsyncStorage.setItem("FarmerToken", data.token);
+
 
       navigation.replace("FarmerHome");
 
@@ -39,7 +43,7 @@ export default function OTPScreen({ route, navigation }) {
 
   const resendOtp = async () => {
     try {
-      await fetch("http://192.168.25.118:7000/api/farmer/auth/send-otp", {
+      await fetch("http://192.168.25.68:7000/api/farmer/auth/send-otp", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ phone }),

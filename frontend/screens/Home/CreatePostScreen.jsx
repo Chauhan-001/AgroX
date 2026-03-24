@@ -10,50 +10,114 @@ import {
   Alert,
 } from "react-native";
 import { launchImageLibrary } from "react-native-image-picker";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+
+/* ✅ MATCH YOUR BACKEND */
+const API_URL = "http://192.168.25.228:7000/api/farmer/create";
 
 export default function CreatePostScreen({ onClose, onPost }) {
-  const [image, setImage] = useState(null);
+  const [images, setImages] = useState([]);
   const [caption, setCaption] = useState("");
   const [crop, setCrop] = useState("");
   const [location, setLocation] = useState("");
+  const [loading, setLoading] = useState(false);
 
+  /* ================= IMAGE PICK ================= */
   const pickImage = async () => {
     const res = await launchImageLibrary({
       mediaType: "photo",
       quality: 0.8,
+      selectionLimit: 0,
     });
 
     if (res.didCancel) return;
 
-    const uri = res.assets?.[0]?.uri;
-    if (uri) setImage(uri);
+    const newImgs = res.assets || [];
+
+    if (images.length + newImgs.length > 5) {
+      Alert.alert("Limit Reached", "Max 5 images allowed");
+      return;
+    }
+
+    setImages([...images, ...newImgs]);
   };
 
-  const handlePost = () => {
-    if (!image) {
+  /* ================= FORM DATA ================= */
+  const createFormData = () => {
+    const formData = new FormData();
+
+    formData.append("caption", caption);
+    formData.append("crop", crop);
+    formData.append("location", location);
+
+    images.forEach((img, index) => {
+      formData.append("images", {
+        uri: img.uri,
+        name: img.fileName || `image_${index}.jpg`,
+        type: img.type || "image/jpeg",
+      });
+    });
+
+    return formData;
+  };
+
+  /* ================= POST ================= */
+  const handlePost = async () => {
+    if (loading) return;
+
+    if (images.length === 0) {
       Alert.alert("Select Image", "Please select crop image");
       return;
     }
 
-    if (!crop) {
+    if (!crop.trim()) {
       Alert.alert("Crop Required", "Please enter crop name");
       return;
     }
 
-    const newPost = {
-      id: Date.now().toString(),
-      image: image,
-      crop: crop,
-      location: location,
-      caption: caption,
-      user: "Farmer",
-      time: "Just now",
-      likes: 0,
-      comments: [],
-    };
+    setLoading(true);
 
-    onPost && onPost(newPost);   // SAFE CALL
-    onClose && onClose();
+    try {
+      const token = await AsyncStorage.getItem("FarmerToken");
+      console.log("Using token:", token); // ✅ DEBUG 
+
+      const res = await fetch(API_URL, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`, // ✅ MUST MATCH verifyToken
+        },
+        body: createFormData(), // ✅ multipart form
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) throw new Error(data.message || "Failed");
+
+      Alert.alert("Success", "Post created");
+
+      /* ✅ OPTIONAL: instant UI update */
+      const newPost = {
+        id: data._id || Date.now().toString(),
+        images: images.map((i) => i.uri),
+        crop,
+        location,
+        caption,
+        user: {
+          name: "Farmer",
+          avatar: "https://i.pravatar.cc/100",
+        },
+        likes: 0,
+        comments: [],
+      };
+
+      onPost && onPost(newPost);
+      onClose && onClose();
+    } catch (err) {
+      console.log("POST ERROR:", err);
+      Alert.alert("Error", err.message);
+    }
+
+    setLoading(false);
   };
 
   return (
@@ -66,24 +130,48 @@ export default function CreatePostScreen({ onClose, onPost }) {
 
         <Text style={styles.title}>Create Post</Text>
 
-        <TouchableOpacity onPress={handlePost}>
-          <Text style={styles.post}>Post</Text>
+        <TouchableOpacity onPress={handlePost} disabled={loading}>
+          <Text style={styles.post}>
+            {loading ? "Posting..." : "Post"}
+          </Text>
         </TouchableOpacity>
       </View>
 
       <ScrollView showsVerticalScrollIndicator={false}>
         {/* IMAGE */}
         <TouchableOpacity style={styles.imageBox} onPress={pickImage}>
-          {image ? (
-            <Image source={{ uri: image }} style={styles.image} />
+          {images.length > 0 ? (
+            <>
+              <Image
+                source={{ uri: images[0].uri }}
+                style={styles.mainImage}
+              />
+
+              <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+                {images.map((img, index) => (
+                  <View key={index} style={styles.thumbWrapper}>
+                    <Image
+                      source={{ uri: img.uri }}
+                      style={styles.thumbnail}
+                    />
+                    <View style={styles.indexBadge}>
+                      <Text style={styles.indexText}>{index + 1}</Text>
+                    </View>
+                  </View>
+                ))}
+              </ScrollView>
+            </>
           ) : (
-            <Text style={styles.pickText}>Tap to select crop image</Text>
+            <Text style={styles.pickText}>
+              Tap to select crop images
+            </Text>
           )}
         </TouchableOpacity>
 
         {/* CROP */}
         <TextInput
           placeholder="Crop Name (e.g Wheat)"
+          placeholderTextColor="#999"
           value={crop}
           onChangeText={setCrop}
           style={styles.input}
@@ -92,6 +180,7 @@ export default function CreatePostScreen({ onClose, onPost }) {
         {/* LOCATION */}
         <TextInput
           placeholder="Farm Location"
+          placeholderTextColor="#999"
           value={location}
           onChangeText={setLocation}
           style={styles.input}
@@ -100,6 +189,7 @@ export default function CreatePostScreen({ onClose, onPost }) {
         {/* CAPTION */}
         <TextInput
           placeholder="Write crop condition, disease, growth etc..."
+          placeholderTextColor="#999"
           value={caption}
           onChangeText={setCaption}
           multiline
@@ -110,6 +200,7 @@ export default function CreatePostScreen({ onClose, onPost }) {
   );
 }
 
+/* ================= STYLES ================= */
 const styles = StyleSheet.create({
   container: {
     position: "absolute",
@@ -137,20 +228,49 @@ const styles = StyleSheet.create({
   title: { fontSize: 18, fontWeight: "700" },
 
   imageBox: {
-    height: 260,
     backgroundColor: "#f2f2f2",
     margin: 15,
     borderRadius: 16,
-    justifyContent: "center",
-    alignItems: "center",
+    padding: 10,
   },
 
-  pickText: { color: "#777", fontSize: 15 },
+  pickText: {
+    color: "#8d8686",
+    fontSize: 15,
+    textAlign: "center",
+  },
 
-  image: {
+  mainImage: {
     width: "100%",
-    height: "100%",
+    height: 180,
     borderRadius: 16,
+    marginBottom: 10,
+  },
+
+  thumbWrapper: {
+    marginRight: 10,
+  },
+
+  thumbnail: {
+    width: 70,
+    height: 70,
+    borderRadius: 10,
+  },
+
+  indexBadge: {
+    position: "absolute",
+    top: 4,
+    left: 4,
+    backgroundColor: "#FF7A00",
+    borderRadius: 10,
+    paddingHorizontal: 6,
+    paddingVertical: 2,
+  },
+
+  indexText: {
+    color: "#fff",
+    fontSize: 10,
+    fontWeight: "700",
   },
 
   input: {
@@ -160,6 +280,7 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     padding: 12,
     marginBottom: 10,
+    color: "#000",
   },
 
   caption: {
@@ -171,5 +292,6 @@ const styles = StyleSheet.create({
     minHeight: 120,
     textAlignVertical: "top",
     marginBottom: 40,
+    color: "#000",
   },
 });

@@ -1,4 +1,5 @@
 import Farmer from "../models/farmerModel.js";
+import farmerPostModel from "../models/farmerPostModel.js";
 import FarmerPost from "../models/farmerPostModel.js";
 import jwt from "jsonwebtoken";
 
@@ -134,7 +135,7 @@ export const toggleLikeComment = async (req, res) => {
 export const addComment = async (req, res) => {
   try {
 
-    const post = await FarmerPost.findById(req.params.postId);
+    const post = await farmerPostModel.findById(req.params.postId);
 
     post.comments.push({
       farmerId: req.user.id,
@@ -153,7 +154,7 @@ export const addComment = async (req, res) => {
 export const replyToComment = async (req, res) => {
   try {
 
-    const post = await FarmerPost.findById(req.params.postId);
+    const post = await farmerPostModel.findById(req.params.postId);
 
     const comment = post.comments.id(req.params.commentId);
 
@@ -174,7 +175,7 @@ export const replyToComment = async (req, res) => {
 export const toggleLikeReply = async (req, res) => {
   try {
 
-    const post = await FarmerPost.findById(req.params.postId);
+    const post = await farmerPostModel.findById(req.params.postId);
 
     const comment = post.comments.id(req.params.commentId);
 
@@ -196,3 +197,39 @@ export const toggleLikeReply = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
+
+export const getAllPosts = async (req, res) => {
+  try {
+    const posts = await farmerPostModel.find()
+      .populate("postedBy", "name ")
+      .sort({ createdAt: -1 });
+
+    res.json(posts);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+
+export const toggleLikePost = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const post = await farmerPostModel.findById(req.params.postId);
+
+    if (!post) return res.status(404).json({ message: "Post not found" });
+
+    const liked = post.likes.includes(userId);
+
+    if (liked) {
+      post.likes.pull(userId);
+    } else {
+      post.likes.push(userId);
+    }
+
+    await post.save();
+
+    res.json(post);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+

@@ -5,15 +5,19 @@ const subsidySchema = new mongoose.Schema({
   description: String,
   schemeType: String, 
   state: String,
-  lastDate: Date,
+  lastDate: String,
   link: String,
-  image: String,
+  images:[
+    {
+      type: String,
+    },
+  ] ,
 
   postedBy: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Admin",
   }
-
+ 
 }, { timestamps: true });
 
 export default mongoose.model("Subsidy", subsidySchema);

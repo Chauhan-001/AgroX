@@ -6,13 +6,15 @@ const farmerPostSchema = new mongoose.Schema({
     type: String,
   },
 
-  mediaUrl: {
+  mediaUrl: [
+    {
     type: String,
-    required: true,
-  },
+  }],
+
   location: {
     type: String,
   },
+  
   postedBy: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Farmer",
@@ -32,7 +34,7 @@ const farmerPostSchema = new mongoose.Schema({
 
     text: String,
 
-    likes: [{
+    commentlikes: [{
       type: mongoose.Schema.Types.ObjectId,
       ref: "Farmer"
     }],
@@ -43,10 +45,7 @@ const farmerPostSchema = new mongoose.Schema({
         ref: "Farmer"
       },
       text: String,
-      likes: [{
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Farmer"
-      }],
+      
       createdAt: {
         type: Date,
         default: Date.now

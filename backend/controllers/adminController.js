@@ -48,13 +48,12 @@ export const adminLogin = async (req, res) => {
 // CREATE POST
 export const createPost = async (req, res) => {
   try {
-
     const { title, product, company, description, price, contactInfo } = req.body;
     const image= req.files ? req.files.map(file => file.path) : [];
     const post = new Post({
       title,
       product,
-      image,
+      images: image,
       company,
       description,
       price,
@@ -170,11 +169,12 @@ export const createNews = async (req, res) => {
     const news = new News({
       title,
       description,
-      image,
+      images: image,
       redirectLink,
       adType,
       postedBy: req.user.id
     });
+    
 
     await news.save();
 
@@ -324,7 +324,7 @@ export const createSubsidy = async (req, res) => {
       state,
       lastDate,
       link,
-      image,
+      images: image,
       postedBy: req.user.id
     });
 

@@ -1,10 +1,15 @@
 import React from "react";
 import { View, TouchableOpacity, Text, StyleSheet } from "react-native";
+import { useNavigation } from "@react-navigation/native";
 
-export default function BottomTabBar({ activeTab, onChange }: any) {
+export default function BottomTabBar({ activeTab }: any) {
+  const navigation = useNavigation();
 
-  const Tab = ({ label, icon, value }: any) => (
-    <TouchableOpacity style={styles.item} onPress={() => onChange(value)}>
+  const Tab = ({ label, icon, value, screen }: any) => (
+    <TouchableOpacity
+      style={styles.item}
+      onPress={() => navigation.navigate(screen)}
+    >
       <Text style={[styles.icon, activeTab === value && styles.active]}>
         {icon}
       </Text>
@@ -16,11 +21,35 @@ export default function BottomTabBar({ activeTab, onChange }: any) {
 
   return (
     <View style={styles.bar}>
-      <Tab label="Social" icon="👥" value="Social" />
-      <Tab label="Prediction Tools" icon="🧠" value="Prediction" />
-      <Tab label="Subsidy" icon="💰" value="Subsidy" />
-      <Tab label="Marketplace" icon="🛒" value="Market" />
-      <Tab label="Profile" icon="👤" value="Profile" />
+      <Tab label="Social" icon="👥" value="Social" screen="FarmerHome" />
+
+      <Tab
+        label="Prediction Tools"
+        icon="🧠"
+        value="Prediction"
+        screen="PredictionScreen"
+      />
+
+      <Tab
+        label="Subsidy"
+        icon="💰"
+        value="Subsidy"
+        screen="AdminSubsidy"
+      />
+
+      <Tab
+        label="Marketplace"
+        icon="🛒"
+        value="Market"
+        screen="AdminMarket"
+      />
+
+      <Tab
+        label="Profile"
+        icon="👤"
+        value="Profile"
+        screen="AdminHome"
+      />
     </View>
   );
 }
