@@ -18,11 +18,11 @@ import {
 } from "react-native";
 import { launchImageLibrary } from "react-native-image-picker";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-
+import {url} from "../../ipconfig"
 const { width } = Dimensions.get("window");
 
-const API_URL = "http://192.168.25.228:7000/api/admin/subsidies";
-const BASE_URL = "http://192.168.29.97:7000";
+const API_URL = `http://${url}:7000/api/admin/subsidies`;
+const BASE_URL = `http://${url}:7000`;
 
 export default function AdminSubsidyScreen() {
   const [posts, setPosts] = useState([]);

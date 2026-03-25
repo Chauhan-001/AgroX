@@ -16,11 +16,12 @@ import {
   Alert,
 } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import {url} from "../ipconfig"
 
 const { width } = Dimensions.get("window");
 const IMAGE_HEIGHT = 300;
 
-const BASE_URL = "http://192.168.25.228:7000";
+const BASE_URL = `http://${url}:7000`;
 const API_URL = `${BASE_URL}/api/farmer`;
 
 export default function SocialScreen() {

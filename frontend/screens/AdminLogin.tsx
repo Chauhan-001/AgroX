@@ -8,7 +8,8 @@ import {
 } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-let url = "192.168.25.228";
+import {url} from "../ipconfig"
+
 export default function AdminLogin({ navigation }) {
   const [adminId, setAdminId] = useState("");
   const [password, setPassword] = useState("");

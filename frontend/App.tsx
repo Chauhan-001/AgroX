@@ -27,6 +27,9 @@ import PredictionScreen from "./screens/Prediction/PredictionScreen";
 import SoilPrediction from "./screens/soil_type_prediction/index";
 import resultsoil from "./screens/soil_type_prediction/result";
 
+import ProfileScreen from "./screens/Profile/ProfileScreen";
+import ProfileViewScreen from "./screens/ProfileView/ProfileViewScreen";
+
 enableScreens();
 
 /* ⭐ TYPE SAFE STACK */
@@ -54,6 +57,8 @@ export type RootStackParamList = {
 
   resultSoil: undefined;
   soilPrediction: undefined; 
+  Profile: undefined;
+  ProfileView: { user: any; posts: any[] };
 };
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -92,6 +97,9 @@ export default function App(): JSX.Element {
 
         <Stack.Screen name="soilPrediction" component={SoilPrediction} />
       <Stack.Screen name="resultSoil" component={resultsoil} />   
+
+      <Stack.Screen name="Profile" component={ProfileScreen} />
+      <Stack.Screen name="ProfileView" component={ProfileViewScreen} />
 
       </Stack.Navigator>
     </NavigationContainer>

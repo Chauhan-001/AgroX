@@ -16,8 +16,9 @@ import {
 } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import {url} from "../../ipconfig"
 
-const BASE_URL = "http://192.168.25.68:7000";
+const BASE_URL = `http://${url}:7000`;
 
 /* ================= INPUT ================= */
 const InputField = ({ label, value, onChangeText, placeholder }) => (

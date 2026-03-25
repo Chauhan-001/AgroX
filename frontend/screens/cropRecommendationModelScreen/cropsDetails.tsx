@@ -14,8 +14,10 @@ import {
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import LinearGradient from 'react-native-linear-gradient';
 
+import {url} from "../../ipconfig"
+
 const { width } = Dimensions.get('window');
-const BASE_URL = "http://192.168.25.68:7000";
+const BASE_URL = `http://${url}:7000`;
 
 const FarmingGuide = ({ route, navigation }) => {
   const { crop } = route.params; 

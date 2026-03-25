@@ -11,9 +11,9 @@ import {
 } from "react-native";
 import { launchImageLibrary } from "react-native-image-picker";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-
+import {url} from "../../ipconfig"
 /* ✅ MATCH YOUR BACKEND */
-const API_URL = "http://192.168.25.228:7000/api/farmer/create";
+const API_URL = `http://${url}:7000/api/farmer/create`;
 
 export default function CreatePostScreen({ onClose, onPost }) {
   const [images, setImages] = useState([]);

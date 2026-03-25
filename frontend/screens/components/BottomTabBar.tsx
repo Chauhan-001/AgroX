@@ -48,7 +48,7 @@ export default function BottomTabBar({ activeTab }: any) {
         label="Profile"
         icon="👤"
         value="Profile"
-        screen="AdminHome"
+        screen="Profile"
       />
     </View>
   );

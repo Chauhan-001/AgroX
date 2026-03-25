@@ -9,7 +9,7 @@ import {
   Pressable,
 } from "react-native";
 
-let url="192.168.25.228" ;
+import {url} from "../ipconfig"
 
 export default function PhoneScreen({ navigation }) {
   const [phone, setPhone] = useState("");

@@ -7,6 +7,7 @@ import {
   Alert,
 } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import {url} from "../ipconfig"
 
 export default function OTPScreen({ route, navigation }) {
   const { phone } = route.params;
@@ -16,7 +17,7 @@ export default function OTPScreen({ route, navigation }) {
     if (otp.length < 4) return;
 
     try {
-      const response = await fetch("http://192.168.25.68:7000/api/farmer/auth/verify-otp", {
+      const response = await fetch(`http://${url}:7000/api/farmer/auth/verify-otp`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ phone, otp }),
@@ -43,7 +44,7 @@ export default function OTPScreen({ route, navigation }) {
 
   const resendOtp = async () => {
     try {
-      await fetch("http://192.168.25.68:7000/api/farmer/auth/send-otp", {
+      await fetch(`http://${url}:7000/api/farmer/auth/send-otp`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ phone }),

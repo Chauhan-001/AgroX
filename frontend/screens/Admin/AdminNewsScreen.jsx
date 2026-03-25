@@ -19,11 +19,11 @@ import {
 import { launchImageLibrary } from "react-native-image-picker";
 import { useIsFocused } from "@react-navigation/native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-
+import { url } from "../../ipconfig";
 const { width } = Dimensions.get("window");
 
-const API_URL = "http://192.168.25.228:7000/api/admin/news";
-const BASE_URL = "http://192.168.25.228:7000";
+const API_URL = `http://${url}:7000/api/admin/news`;
+const BASE_URL = `http://${url}:7000`;
 
 export default function AdminNewsScreen() {
   const isFocused = useIsFocused();
