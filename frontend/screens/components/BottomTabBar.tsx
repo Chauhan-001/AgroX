@@ -34,14 +34,14 @@ export default function BottomTabBar({ activeTab }: any) {
         label="Subsidy"
         icon="💰"
         value="Subsidy"
-        screen="AdminSubsidy"
+        screen="SubsidyScreen"
       />
 
       <Tab
         label="Marketplace"
         icon="🛒"
         value="Market"
-        screen="AdminMarket"
+        screen="MarketScreen"
       />
 
       <Tab

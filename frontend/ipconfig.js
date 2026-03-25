@@ -1,1 +1,1 @@
-export const url="192.168.25.126";
+export const url="192.168.25.118";

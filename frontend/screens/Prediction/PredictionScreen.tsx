@@ -1,43 +1,81 @@
 import React from "react";
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import { useNavigation, NavigationProp } from "@react-navigation/native";
+import BottomTabBar from "../components/BottomTabBar";
 
 type RootStackParamList = {
   cropPredictionScreen: undefined;
+  soilPrediction: undefined;
 };
 
 export default function PredictionScreen() {
   const navigation = useNavigation<NavigationProp<RootStackParamList>>();
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>🌾 Prediction Tools</Text>
+    <View style={styles.screen}>
 
-      {/* Crop Recommendation */}
-      <TouchableOpacity
-        style={styles.card}
-        onPress={() => navigation.navigate("cropPredictionScreen")}
-      >
-        <Text style={styles.cardText}>🌱 Crop Recommendation Tool</Text>
-      </TouchableOpacity>
+      {/* ⭐ HEADER */}
+      <View style={styles.header}>
+        <Text style={styles.headerTitle}>AgroX Prediction</Text>
+      </View>
 
-      {/* Weather */}
-      <TouchableOpacity style={styles.card}
-       onPress={() => navigation.navigate("soilPrediction")}
-       >
-        <Text style={styles.cardText}>Soil prediction</Text>
-      </TouchableOpacity>
+      {/* ⭐ CONTENT */}
+      <View style={styles.container}>
+        <Text style={styles.title}>🌾 Prediction Tools</Text>
 
-      {/* Yield */}
-      <TouchableOpacity style={styles.card}>
-        <Text style={styles.cardText}>📊 Crop Yield AI</Text>
-      </TouchableOpacity>
+        <TouchableOpacity
+          style={styles.card}
+          onPress={() => navigation.navigate("cropPredictionScreen")}
+        >
+          <Text style={styles.cardText}>🌱 Crop Recommendation Tool</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          style={styles.card}
+          onPress={() => navigation.navigate("soilPrediction")}
+        >
+          <Text style={styles.cardText}>🧪 Soil Prediction</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity style={styles.card}>
+          <Text style={styles.cardText}>📊 Crop Yield AI</Text>
+        </TouchableOpacity>
+      </View>
+
+      {/* ⭐ SAME FOOTER */}
+      <BottomTabBar activeTab="Prediction" onChange={()=>{}} />
+
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { padding: 20 },
+  screen: {
+    flex: 1,
+    backgroundColor: "#fff",
+  },
+
+  header: {
+    height: 120,
+    backgroundColor: "#FF7A00",
+    borderBottomLeftRadius: 30,
+    borderBottomRightRadius: 30,
+    justifyContent: "flex-end",
+    paddingBottom: 15,
+    paddingHorizontal: 20,
+    elevation: 8,
+  },
+
+  headerTitle: {
+    color: "#fff",
+    fontSize: 22,
+    fontWeight: "800",
+  },
+
+  container: {
+    flex: 1,
+    padding: 20,
+  },
 
   title: {
     fontSize: 22,
