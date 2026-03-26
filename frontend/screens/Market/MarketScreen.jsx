@@ -1,110 +1,129 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   View,
   Text,
   StyleSheet,
   TouchableOpacity,
-  SafeAreaView,
+  StatusBar,
+  TextInput,
 } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+import BottomTabBar from "../components/BottomTabBar";
+
+const HEADER_HEIGHT = 150;
 
 export default function MarketScreen({ navigation }) {
+  const insets = useSafeAreaInsets();
+  const [search, setSearch] = useState("");
+
+  // ✅ Added screen mapping
+  const data = [
+   
+  { name: "🌿 Fertilizers", screen: "FertilizersScreen" },
+  { name: "🌱 Seeds", screen: "SeedsScreen" },
+  { name: "🚜 Farming Tools", screen: "ToolsScreen" },
+];
+
+  const filteredData = data.filter((item) =>
+    item.name.toLowerCase().includes(search.toLowerCase())
+  );
+
   return (
-    <SafeAreaView style={styles.safe}>
+    <View style={styles.container}>
+      <StatusBar barStyle="light-content" backgroundColor="#FF7A00" />
 
       {/* ⭐ HEADER */}
-      <View style={styles.header}>
+      <View style={[styles.header, { paddingTop: insets.top }]}>
         <Text style={styles.headerTitle}>AgroX Market</Text>
+
+        {/* 🔍 SEARCH BAR */}
+        <View style={styles.searchBox}>
+          <TextInput
+            placeholder="Search products..."
+            placeholderTextColor="#777"
+            value={search}
+            onChangeText={setSearch}
+            style={styles.searchInput}
+          />
+        </View>
       </View>
 
       {/* ⭐ CONTENT */}
-      <View style={styles.container}>
+      <View
+        style={[
+          styles.content,
+          {
+            paddingTop: HEADER_HEIGHT + insets.top + 10,
+            paddingBottom: 120 + insets.bottom,
+          },
+        ]}
+      >
         <Text style={styles.title}>🛒 Market Place</Text>
 
-        <View style={styles.card}>
-          <Text style={styles.cardText}>🌿 Fertilizers</Text>
-        </View>
-
-        <View style={styles.card}>
-          <Text style={styles.cardText}>🌱 Seeds</Text>
-        </View>
-
-        <View style={styles.card}>
-          <Text style={styles.cardText}>🚜 Farming Tools</Text>
-        </View>
+        {filteredData.map((item, index) => (
+          <TouchableOpacity
+            key={index}
+            style={styles.card}
+            onPress={() => navigation.navigate(item.screen)}
+          >
+            <Text style={styles.cardText}>{item.name}</Text>
+          </TouchableOpacity>
+        ))}
       </View>
 
       {/* ⭐ FOOTER */}
-      <View style={styles.footer}>
-
-        <TouchableOpacity
-          style={styles.tab}
-          onPress={() => navigation.replace("FarmerHome")}
-        >
-          <Text style={styles.icon}>👥</Text>
-          <Text style={styles.label}>Social</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity
-          style={styles.tab}
-          onPress={() => navigation.replace("PredictionScreen")}
-        >
-          <Text style={styles.icon}>🧠</Text>
-          <Text style={styles.label}>Prediction</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity
-          style={styles.tab}
-          onPress={() => navigation.replace("SubsidyScreen")}
-        >
-          <Text style={styles.icon}>💰</Text>
-          <Text style={styles.label}>Subsidy</Text>
-        </TouchableOpacity>
-
-        <View style={styles.tab}>
-          <Text style={styles.iconActive}>🛒</Text>
-          <Text style={styles.labelActive}>Marketplace</Text>
-        </View>
-
-        <TouchableOpacity
-          style={styles.tab}
-          onPress={() => navigation.replace("Profile")}
-        >
-          <Text style={styles.icon}>👤</Text>
-          <Text style={styles.label}>Profile</Text>
-        </TouchableOpacity>
-
+      <View style={[styles.footer, { paddingBottom: insets.bottom }]}>
+        <BottomTabBar activeTab="Marketplace" />
       </View>
-
-    </SafeAreaView>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
-  safe: {
+  container: {
     flex: 1,
-    backgroundColor: "#fff",
+    backgroundColor: "#f4f6f8",
   },
 
   header: {
-    height: 120,
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    height: HEADER_HEIGHT,
     backgroundColor: "#FF7A00",
     borderBottomLeftRadius: 30,
     borderBottomRightRadius: 30,
-    justifyContent: "flex-end",
-    paddingBottom: 15,
     paddingHorizontal: 20,
-    elevation: 8,
+    paddingBottom: 15,
+    elevation: 10,
+    zIndex: 10,
+    justifyContent: "flex-end",
   },
 
   headerTitle: {
     color: "#fff",
     fontSize: 22,
     fontWeight: "800",
+    marginBottom: 10,
   },
 
-  container: {
+  searchBox: {
+    backgroundColor: "#fff",
+    borderRadius: 10,
+    paddingHorizontal: 12,
+    height: 42,
+    justifyContent: "center",
+  },
+
+  searchInput: {
+    fontSize: 14,
+    color: "#333",
+  },
+
+  content: {
     flex: 1,
-    padding: 20,
+    paddingHorizontal: 20,
   },
 
   title: {
@@ -115,11 +134,12 @@ const styles = StyleSheet.create({
 
   card: {
     height: 100,
-    backgroundColor: "#E3F2FD",
+    backgroundColor: "#fff",
     borderRadius: 18,
     justifyContent: "center",
     paddingLeft: 15,
     marginBottom: 12,
+    elevation: 3,
   },
 
   cardText: {
@@ -128,39 +148,11 @@ const styles = StyleSheet.create({
   },
 
   footer: {
-    flexDirection: "row",
-    justifyContent: "space-around",
-    alignItems: "center",
-    paddingVertical: 10,
-    borderTopWidth: 1,
-    borderColor: "#eee",
+    position: "absolute",
+    bottom: 0,
+    left: 0,
+    right: 0,
     backgroundColor: "#fff",
-  },
-
-  tab: {
-    alignItems: "center",
-  },
-
-  icon: {
-    fontSize: 22,
-    color: "#777",
-  },
-
-  iconActive: {
-    fontSize: 22,
-    color: "#FF7A00",
-  },
-
-  label: {
-    fontSize: 11,
-    color: "#777",
-    marginTop: 2,
-  },
-
-  labelActive: {
-    fontSize: 11,
-    color: "#FF7A00",
-    marginTop: 2,
-    fontWeight: "700",
+    elevation: 25,
   },
 });

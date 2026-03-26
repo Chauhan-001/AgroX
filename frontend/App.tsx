@@ -13,13 +13,13 @@ import OtpScreen from "./screens/otpScreen";
 import AdminLogin from "./screens/AdminLogin";
 import AdminHome from "./screens/Admin/AdminHome";
 
-/* ⭐ ADMIN POST SCREENS */
+/* ⭐ ADMIN */
 import AdminNewsScreen from "./screens/Admin/AdminNewsScreen";
 import AdminSubsidyScreen from "./screens/Admin/AdminSubsidyScreen";
 import AdminMarketScreen from "./screens/Admin/AdminMarketScreen";
 import FarmerMarketDetails from "./screens/Admin/FarmerMarketDetails";
 
-/* ⭐ MODEL SCREENS */
+/* ⭐ MODEL */
 import cropsDetails from "./screens/cropRecommendationModelScreen/cropsDetails";
 import cropPredictionScreen from "./screens/cropRecommendationModelScreen/cropPredictionScreen";
 import selectCrop from "./screens/cropRecommendationModelScreen/selectCrop";
@@ -33,13 +33,16 @@ import ProfileScreen from "./screens/Profile/ProfileScreen";
 import EditProfileScreen from "./screens/Profile/EditProfileScreen";
 import ProfileViewScreen from "./screens/ProfileView/ProfileViewScreen";
 
-/* ⭐ SOCIAL + MARKET + SUBSIDY */
+/* ⭐ SOCIAL / MARKET */
 import SocialScreen from "./screens/SocialScreen";
 import BottomTabBar from "./screens/components/BottomTabBar";
 import MarketScreen from "./screens/Market/MarketScreen";
 import SubsidyScreen from "./screens/Subsidy/SubsidyScreen";
+import FertilizersScreen from "./screens/Market/FertilizersScreen";
+import SeedsScreen from "./screens/Market/SeedsScreen";
+import ToolsScreen from "./screens/Market/ToolsScreen"; // ✅ ADDED
 
-/* ⭐ TYPE SAFE STACK */
+/* ⭐ TYPES */
 export type RootStackParamList = {
   Splash: undefined;
   PhoneEntry: undefined;
@@ -68,8 +71,13 @@ export type RootStackParamList = {
 
   SocialScreen: undefined;
   BottomTabBar: undefined;
+
   MarketScreen: undefined;
   SubsidyScreen: undefined;
+
+  FertilizersScreen: undefined;
+  SeedsScreen: undefined;
+  ToolsScreen: undefined; // ✅ ADDED
 };
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -84,15 +92,15 @@ export default function App(): JSX.Element {
           animation: "slide_from_right",
         }}
       >
+        {/* ⭐ AUTH */}
         <Stack.Screen name="Splash" component={SplashScreen} />
         <Stack.Screen name="PhoneEntry" component={PhoneEntry} />
         <Stack.Screen name="OTP" component={OtpScreen} />
         <Stack.Screen name="FarmerHome" component={HomeScreen} />
 
+        {/* ⭐ ADMIN */}
         <Stack.Screen name="AdminLogin" component={AdminLogin} />
         <Stack.Screen name="AdminHome" component={AdminHome} />
-
-        {/* ⭐ ADMIN */}
         <Stack.Screen name="AdminNews" component={AdminNewsScreen} />
         <Stack.Screen name="AdminSubsidy" component={AdminSubsidyScreen} />
         <Stack.Screen name="AdminMarket" component={AdminMarketScreen} />
@@ -103,7 +111,6 @@ export default function App(): JSX.Element {
         <Stack.Screen name="cropPredictionScreen" component={cropPredictionScreen} />
         <Stack.Screen name="selectCrop" component={selectCrop} />
         <Stack.Screen name="PredictionScreen" component={PredictionScreen} />
-
         <Stack.Screen name="soilPrediction" component={SoilPrediction} />
         <Stack.Screen name="resultSoil" component={resultsoil} />
 
@@ -117,6 +124,11 @@ export default function App(): JSX.Element {
         <Stack.Screen name="BottomTabBar" component={BottomTabBar} />
         <Stack.Screen name="MarketScreen" component={MarketScreen} />
         <Stack.Screen name="SubsidyScreen" component={SubsidyScreen} />
+
+        {/* ⭐ MARKET SCREENS */}
+        <Stack.Screen name="FertilizersScreen" component={FertilizersScreen} />
+        <Stack.Screen name="SeedsScreen" component={SeedsScreen} />
+        <Stack.Screen name="ToolsScreen" component={ToolsScreen} />
 
       </Stack.Navigator>
     </NavigationContainer>

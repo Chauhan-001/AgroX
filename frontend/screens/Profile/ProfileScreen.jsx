@@ -11,9 +11,11 @@ import {
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { launchImageLibrary } from "react-native-image-picker";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 export default function ProfileScreen({ route }) {
   const navigation = useNavigation();
+  const insets = useSafeAreaInsets(); // ✅ NOW SAFE
 
   const [user, setUser] = useState(
     route?.params?.user || {
@@ -29,7 +31,7 @@ export default function ProfileScreen({ route }) {
 
   const changePhoto = () => {
     launchImageLibrary({ mediaType: "photo" }, (res) => {
-      if (res.assets && res.assets.length > 0) {
+      if (res.assets?.length) {
         setUser({ ...user, avatar: res.assets[0].uri });
       }
     });
@@ -43,14 +45,18 @@ export default function ProfileScreen({ route }) {
     <SafeAreaView style={styles.safe}>
       <View style={styles.screen}>
 
-        {/* ⭐ AGROX HEADER */}
+        {/* HEADER */}
         <View style={styles.headerBar}>
           <Text style={styles.headerTitle}>AgroX</Text>
         </View>
 
-        <ScrollView showsVerticalScrollIndicator={false}>
-
-          {/* ⭐ PROFILE HEADER CARD */}
+        {/* SCROLL */}
+        <ScrollView
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={{
+            paddingBottom: 120 + insets.bottom,
+          }}
+        >
           <View style={styles.headerCard}>
             <TouchableOpacity onPress={changePhoto}>
               <Image source={{ uri: user.avatar }} style={styles.avatar} />
@@ -77,28 +83,15 @@ export default function ProfileScreen({ route }) {
             </TouchableOpacity>
           </View>
 
-          {/* ⭐ OPTION SECTION */}
           <View style={styles.section}>
             <Text style={styles.sectionTitle}>My Activity</Text>
 
-            <View style={styles.card}>
-              <Text style={styles.cardText}>🌾 My Crops</Text>
-            </View>
-
-            <View style={styles.card}>
-              <Text style={styles.cardText}>🧠 Saved Predictions</Text>
-            </View>
-
-            <View style={styles.card}>
-              <Text style={styles.cardText}>📊 Farming History</Text>
-            </View>
-
-            <View style={styles.card}>
-              <Text style={styles.cardText}>⚙️ Settings</Text>
-            </View>
+            <View style={styles.card}><Text style={styles.cardText}>🌾 My Crops</Text></View>
+            <View style={styles.card}><Text style={styles.cardText}>🧠 Saved Predictions</Text></View>
+            <View style={styles.card}><Text style={styles.cardText}>📊 Farming History</Text></View>
+            <View style={styles.card}><Text style={styles.cardText}>⚙️ Settings</Text></View>
           </View>
 
-          {/* ⭐ POSTS GRID */}
           <View style={styles.section}>
             <Text style={styles.sectionTitle}>My Posts</Text>
 
@@ -114,39 +107,26 @@ export default function ProfileScreen({ route }) {
               />
             )}
           </View>
-
         </ScrollView>
 
-        {/* ⭐ FOOTER */}
-        <View style={styles.footer}>
-          <TouchableOpacity
-            style={styles.tab}
-            onPress={() => navigation.replace("FarmerHome")}
-          >
+        {/* FOOTER */}
+        <View style={[styles.footer, { paddingBottom: insets.bottom }]}>
+          <TouchableOpacity style={styles.tab} onPress={() => navigation.replace("FarmerHome")}>
             <Text style={styles.icon}>👥</Text>
             <Text style={styles.label}>Social</Text>
           </TouchableOpacity>
 
-          <TouchableOpacity
-            style={styles.tab}
-            onPress={() => navigation.replace("PredictionScreen")}
-          >
+          <TouchableOpacity style={styles.tab} onPress={() => navigation.replace("PredictionScreen")}>
             <Text style={styles.icon}>🧠</Text>
             <Text style={styles.label}>Prediction</Text>
           </TouchableOpacity>
 
-          <TouchableOpacity
-            style={styles.tab}
-            onPress={() => navigation.replace("SubsidyScreen")}
-          >
+          <TouchableOpacity style={styles.tab} onPress={() => navigation.replace("SubsidyScreen")}>
             <Text style={styles.icon}>💰</Text>
             <Text style={styles.label}>Subsidy</Text>
           </TouchableOpacity>
 
-          <TouchableOpacity
-            style={styles.tab}
-            onPress={() => navigation.replace("MarketScreen")}
-          >
+          <TouchableOpacity style={styles.tab} onPress={() => navigation.replace("MarketScreen")}>
             <Text style={styles.icon}>🛒</Text>
             <Text style={styles.label}>Market</Text>
           </TouchableOpacity>
@@ -177,11 +157,7 @@ const styles = StyleSheet.create({
     elevation: 6,
   },
 
-  headerTitle: {
-    color: "#fff",
-    fontSize: 24,
-    fontWeight: "900",
-  },
+  headerTitle: { color: "#fff", fontSize: 24, fontWeight: "900" },
 
   headerCard: {
     backgroundColor: "#fff",
@@ -203,7 +179,13 @@ const styles = StyleSheet.create({
   name: { fontSize: 22, fontWeight: "800" },
   bio: { color: "#666", marginTop: 2 },
 
-  row: { flexDirection: "row", gap: 10, marginTop: 6 },
+  row: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    width: "80%",
+    marginTop: 6,
+  },
+
   meta: { color: "#777", fontSize: 12 },
 
   postStat: { alignItems: "center", marginTop: 8 },
@@ -240,22 +222,22 @@ const styles = StyleSheet.create({
   post: { width: "33.33%", height: 120 },
 
   footer: {
+    position: "absolute",
+    bottom: 0,
+    left: 0,
+    right: 0,
     flexDirection: "row",
     justifyContent: "space-around",
     paddingVertical: 10,
     borderTopWidth: 1,
     borderColor: "#eee",
     backgroundColor: "#fff",
+    elevation: 20,
   },
 
   tab: { alignItems: "center" },
   icon: { fontSize: 22, color: "#777" },
   iconActive: { fontSize: 22, color: "#FF7A00" },
-  label: { fontSize: 11, color: "#777", marginTop: 2 },
-  labelActive: {
-    fontSize: 11,
-    color: "#FF7A00",
-    marginTop: 2,
-    fontWeight: "700",
-  },
+  label: { fontSize: 11, color: "#777" },
+  labelActive: { fontSize: 11, color: "#FF7A00", fontWeight: "700" },
 });

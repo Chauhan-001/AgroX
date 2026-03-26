@@ -1,6 +1,13 @@
 import React from "react";
-import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
+import {
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  StatusBar,
+} from "react-native";
 import { useNavigation, NavigationProp } from "@react-navigation/native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import BottomTabBar from "../components/BottomTabBar";
 
 type RootStackParamList = {
@@ -8,19 +15,31 @@ type RootStackParamList = {
   soilPrediction: undefined;
 };
 
+const HEADER_HEIGHT = 140;
+
 export default function PredictionScreen() {
   const navigation = useNavigation<NavigationProp<RootStackParamList>>();
+  const insets = useSafeAreaInsets();
 
   return (
     <View style={styles.screen}>
+      <StatusBar barStyle="light-content" backgroundColor="#FF7A00" />
 
       {/* ⭐ HEADER */}
-      <View style={styles.header}>
+      <View style={[styles.header, { paddingTop: insets.top }]}>
         <Text style={styles.headerTitle}>AgroX Prediction</Text>
       </View>
 
       {/* ⭐ CONTENT */}
-      <View style={styles.container}>
+      <View
+        style={[
+          styles.container,
+          {
+            paddingTop: HEADER_HEIGHT + insets.top + 10,
+            paddingBottom: 120 + insets.bottom,
+          },
+        ]}
+      >
         <Text style={styles.title}>🌾 Prediction Tools</Text>
 
         <TouchableOpacity
@@ -42,9 +61,10 @@ export default function PredictionScreen() {
         </TouchableOpacity>
       </View>
 
-      {/* ⭐ SAME FOOTER */}
-      <BottomTabBar activeTab="Prediction" onChange={()=>{}} />
-
+      {/* ⭐ FOOTER (FIXED LIKE SUBSIDY SCREEN) */}
+      <View style={[styles.footer, { paddingBottom: insets.bottom }]}>
+        <BottomTabBar activeTab="Prediction" />
+      </View>
     </View>
   );
 }
@@ -52,18 +72,23 @@ export default function PredictionScreen() {
 const styles = StyleSheet.create({
   screen: {
     flex: 1,
-    backgroundColor: "#fff",
+    backgroundColor: "#f4f6f8",
   },
 
   header: {
-    height: 120,
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    height: HEADER_HEIGHT,
     backgroundColor: "#FF7A00",
     borderBottomLeftRadius: 30,
     borderBottomRightRadius: 30,
-    justifyContent: "flex-end",
-    paddingBottom: 15,
     paddingHorizontal: 20,
-    elevation: 8,
+    paddingBottom: 15,
+    elevation: 10,
+    zIndex: 10,
+    justifyContent: "flex-end",
   },
 
   headerTitle: {
@@ -74,7 +99,7 @@ const styles = StyleSheet.create({
 
   container: {
     flex: 1,
-    padding: 20,
+    paddingHorizontal: 20,
   },
 
   title: {
@@ -85,15 +110,25 @@ const styles = StyleSheet.create({
 
   card: {
     height: 80,
-    backgroundColor: "#F4F6FA",
+    backgroundColor: "#fff",
     borderRadius: 18,
     justifyContent: "center",
     paddingLeft: 15,
     marginBottom: 12,
+    elevation: 3,
   },
 
   cardText: {
     fontSize: 16,
     fontWeight: "500",
+  },
+
+  footer: {
+    position: "absolute",
+    bottom: 0,
+    left: 0,
+    right: 0,
+    backgroundColor: "#fff",
+    elevation: 25,
   },
 });
